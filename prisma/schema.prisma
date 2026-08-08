@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Dokter (card) pada kanban board RRKM
+// scheduledDay = null berarti masih di kolom "Pool" (belum dijadwalkan)
+model Doctor {
+  id            String   @id @default(cuid())
+  name          String
+  outlet        String
+  // Hari praktek dokter, format CSV, misal "SENIN,RABU"
+  practiceDays  String
+  // Jam praktek, format "HH:mm", misal "09:00"
+  practiceStart String
+  practiceEnd   String
+  // Hari dijadwalkan, null = Pool. Nilai salah satu dari SENIN..SABTU
+  scheduledDay  String?
+  // Urutan card di dalam kolom (untuk drag & drop)
+  position      Int      @default(0)
+  createdAt     DateTime @default(now())
+}
