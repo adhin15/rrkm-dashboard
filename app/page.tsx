@@ -1,6 +1,10 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Board from "@/components/Board";
+import LogoutButton from "@/components/LogoutButton";
 import type { DayKey } from "@/lib/types";
+import { validateSession } from "@/lib/auth";
 
 // Wajib: hindari static generation error saat DB kosong di fase build (Docker)
 export const dynamic = "force-dynamic";
@@ -11,6 +15,13 @@ export const metadata = {
 };
 
 export default async function Home() {
+  // Validasi session (token valid & belum expired) — keamanan di level server
+  const token = (await cookies()).get("session")?.value;
+  const userId = await validateSession(token);
+  if (!userId) {
+    redirect("/login");
+  }
+
   const dbDoctors = await prisma.doctor.findMany({
     include: { schedules: true },
     orderBy: [{ scheduledDay: "asc" }, { position: "asc" }, { name: "asc" }],
@@ -35,13 +46,16 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
       <div className="mx-auto max-w-[1400px] px-4 py-6">
-        <header className="mb-6">
-          <h1 className="text-2xl font-bold tracking-tight">
-            RRKM <span className="text-cyan-400">Dashboard</span>
-          </h1>
-          <p className="mt-1 text-sm text-zinc-400">
-            Jadwal kunjungan mingguan dokter — drag & drop, validasi otomatis
-          </p>
+        <header className="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">
+              RRKM <span className="text-cyan-400">Dashboard</span>
+            </h1>
+            <p className="mt-1 text-sm text-zinc-400">
+              Jadwal kunjungan mingguan dokter — drag & drop, validasi otomatis
+            </p>
+          </div>
+          <LogoutButton />
         </header>
 
         <Board doctors={doctors} />

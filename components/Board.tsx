@@ -7,6 +7,7 @@ import KanbanBoard from "./KanbanBoard";
 import TableView from "./TableView";
 import DoctorForm from "./DoctorForm";
 import ImportExcel from "./ImportExcel";
+import ExportButton from "./ExportButton";
 import DoctorDetailModal from "./DoctorDetailModal";
 import type { DoctorDTO, DayKey } from "@/lib/types";
 import { DAY_ORDER, DAY_LABEL } from "@/lib/types";
@@ -231,6 +232,7 @@ export default function Board({ doctors }: Props) {
             </button>
           )}
           <ImportExcel onImported={refresh} />
+          <ExportButton doctors={doctors} />
           <DoctorForm onAdded={refresh} />
         </div>
       </div>

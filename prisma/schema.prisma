@@ -10,6 +10,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User aplikasi. Tidak ada fitur register — dibuat manual via script.
+model User {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  sessions     Session[]
+}
+
+// Session login. Token acak disimpan di cookie httpOnly.
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
 // Dokter (card) pada kanban board RRKM
 // scheduledDay = null berarti masih di kolom "Pool" (belum dijadwalkan)
 model Doctor {
