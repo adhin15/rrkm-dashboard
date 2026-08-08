@@ -1,51 +1,71 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { DAY_ORDER, type DayKey } from "@/lib/types";
+import type { Doctor, Schedule } from "@prisma/client";
+import { DAY_ORDER, type DayKey, type ScheduleDTO } from "@/lib/types";
 
-// Validasi & normalisasi hari praktek (CSV -> array DayKey)
-function parseDays(raw: string): DayKey[] {
-  return raw
-    .toUpperCase()
-    .split(",")
-    .map((s) => s.trim())
-    .filter((s) => DAY_ORDER.includes(s as DayKey)) as DayKey[];
+// Validasi & normalisasi daftar jadwal
+function normalizeSchedules(schedules: unknown): ScheduleDTO[] {
+  if (!Array.isArray(schedules)) return [];
+  const valid: ScheduleDTO[] = [];
+  for (const s of schedules) {
+    const day = (s?.day ?? "").toUpperCase();
+    if (!DAY_ORDER.includes(day as DayKey)) continue;
+    const start = String(s?.startTime ?? "").trim();
+    const end = String(s?.endTime ?? "").trim();
+    if (!/^\d{1,2}:\d{2}$/.test(start) || !/^\d{1,2}:\d{2}$/.test(end)) continue;
+    const [sh, sm] = start.split(":").map(Number);
+    const [eh, em] = end.split(":").map(Number);
+    if (sh * 60 + sm >= eh * 60 + em) continue; // end harus > start
+    valid.push({ day: day as DayKey, startTime: `${String(sh).padStart(2, "0")}:${String(sm).padStart(2, "0")}`, endTime: `${String(eh).padStart(2, "0")}:${String(em).padStart(2, "0")}` });
+  }
+  return valid;
 }
 
-// ===== GET /api/doctors — ambil semua dokter, urutkan per kolom =====
+// Tipe hasil query doctor + schedules
+type DoctorWithSchedules = Doctor & { schedules: Schedule[] };
+
+// Serialize doctor + schedules ke DoctorDTO
+function toDTO(d: DoctorWithSchedules) {
+  return {
+    id: d.id,
+    name: d.name,
+    outlet: d.outlet,
+    schedules: d.schedules.map((s) => ({
+      day: s.day as DayKey,
+      startTime: s.startTime,
+      endTime: s.endTime,
+    })),
+    scheduledDay: d.scheduledDay as DayKey | null,
+    position: d.position,
+    flexible: d.flexible,
+    visited: d.visited,
+  };
+}
+
+// ===== GET /api/doctors — ambil semua dokter + schedules =====
 export async function GET() {
   const doctors = await prisma.doctor.findMany({
+    include: { schedules: true },
     orderBy: [{ scheduledDay: "asc" }, { position: "asc" }, { name: "asc" }],
   });
-  return NextResponse.json({
-    doctors: doctors.map((d) => ({
-      id: d.id,
-      name: d.name,
-      outlet: d.outlet,
-      practiceDays: parseDays(d.practiceDays),
-      practiceStart: d.practiceStart,
-      practiceEnd: d.practiceEnd,
-      scheduledDay: d.scheduledDay as DayKey | null,
-      position: d.position,
-    })),
-  });
+  return NextResponse.json({ doctors: doctors.map(toDTO) });
 }
 
 // ===== POST /api/doctors — tambah dokter (manual) =====
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { name, outlet, practiceDays, practiceStart, practiceEnd, scheduledDay } = body;
+  const { name, outlet, schedules, scheduledDay, flexible } = body;
 
-  if (!name || !outlet || !practiceDays?.length || !practiceStart || !practiceEnd) {
+  if (!name || !outlet || !schedules?.length) {
     return NextResponse.json(
-      { error: "name, outlet, practiceDays, practiceStart, practiceEnd wajib diisi" },
+      { error: "name, outlet, dan schedules (min 1 jadwal) wajib diisi" },
       { status: 400 }
     );
   }
-
-  const days = parseDays(practiceDays.join(","));
-  if (days.length === 0) {
+  const valid = normalizeSchedules(schedules);
+  if (valid.length === 0) {
     return NextResponse.json(
-      { error: "practiceDays tidak valid (gunakan SENIN-SABTU)" },
+      { error: "Jadwal tidak valid (butuh day, startTime, endTime; endTime > startTime)" },
       { status: 400 }
     );
   }
@@ -59,21 +79,21 @@ export async function POST(request: NextRequest) {
     data: {
       name,
       outlet,
-      practiceDays: days.join(","),
-      practiceStart,
-      practiceEnd,
       scheduledDay: scheduledDay ?? null,
       position: (maxPos._max.position ?? 0) + 1,
+      flexible: flexible === true,
+      schedules: { create: valid },
     },
+    include: { schedules: true },
   });
 
-  return NextResponse.json({ doctor }, { status: 201 });
+  return NextResponse.json({ doctor: toDTO(doctor) }, { status: 201 });
 }
 
-// ===== PATCH /api/doctors — update (pindah kolom saat drag-drop) =====
+// ===== PATCH /api/doctors — update (pindah kolom / edit profil) =====
 export async function PATCH(request: NextRequest) {
   const body = await request.json();
-  const { id, name, outlet, practiceDays, practiceStart, practiceEnd, scheduledDay, position } = body;
+  const { id, name, outlet, schedules, scheduledDay, position, flexible, visited } = body;
 
   if (!id) {
     return NextResponse.json({ error: "id wajib diisi" }, { status: 400 });
@@ -82,14 +102,29 @@ export async function PATCH(request: NextRequest) {
   const data: Record<string, unknown> = {};
   if (name !== undefined) data.name = name;
   if (outlet !== undefined) data.outlet = outlet;
-  if (practiceStart !== undefined) data.practiceStart = practiceStart;
-  if (practiceEnd !== undefined) data.practiceEnd = practiceEnd;
   if (position !== undefined) data.position = position;
   if (scheduledDay !== undefined) data.scheduledDay = scheduledDay; // null -> Pool
-  if (practiceDays !== undefined) data.practiceDays = parseDays(practiceDays.join(",")).join(",");
+  if (flexible !== undefined) data.flexible = flexible === true;
+  if (visited !== undefined) data.visited = visited === true;
 
-  const doctor = await prisma.doctor.update({ where: { id }, data });
-  return NextResponse.json({ doctor });
+  // Jika ada schedules baru, replace seluruh jadwal (transaction)
+  if (schedules !== undefined) {
+    const valid = normalizeSchedules(schedules);
+    if (valid.length === 0) {
+      return NextResponse.json(
+        { error: "Jadwal tidak valid (butuh day, startTime, endTime; endTime > startTime)" },
+        { status: 400 }
+      );
+    }
+    data.schedules = { deleteMany: {}, create: valid };
+  }
+
+  const doctor = await prisma.doctor.update({
+    where: { id },
+    data,
+    include: { schedules: true },
+  });
+  return NextResponse.json({ doctor: toDTO(doctor) });
 }
 
 // ===== DELETE /api/doctors?id=xxx — hapus dokter =====
@@ -104,8 +139,6 @@ export async function DELETE(request: NextRequest) {
 
 // ===== PUT /api/doctors — "set data minggu ini": reset semua ke Pool =====
 export async function PUT() {
-  await prisma.doctor.updateMany({
-    data: { scheduledDay: null, position: 0 },
-  });
+  await prisma.doctor.updateMany({ data: { scheduledDay: null, position: 0 } });
   return NextResponse.json({ ok: true });
 }

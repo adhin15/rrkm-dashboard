@@ -1,36 +1,71 @@
 import { PrismaClient } from "@prisma/client";
+import * as fs from "fs";
+import * as path from "path";
 
 const prisma = new PrismaClient();
 
-// Data contoh dokter untuk tes (area selatan — konsisten dgn case RRKM)
-const doctors = [
-  // Praktek hari tertentu, beberapa tabrakan sengaja dibuat untuk tes warna
-  { name: "dr. Andi Pratama", outlet: "Puskesmas Sukamaju", practiceDays: "SENIN,RABU", practiceStart: "09:00", practiceEnd: "11:00" },
-  { name: "dr. Budi Santoso", outlet: "Puskesmas Sukamaju", practiceDays: "SENIN", practiceStart: "09:30", practiceEnd: "11:30" }, // tabrakan dgn Andi, outlet SAMA -> HIJAU
-  { name: "dr. Citra Lestari", outlet: "Klinik Sehat", practiceDays: "SENIN", practiceStart: "10:00", practiceEnd: "12:00" }, // tabrakan dgn Andi, outlet BEDA -> MERAH MUDA
-  { name: "dr. Dewi Anggraini", outlet: "Puskesmas Sukamaju", practiceDays: "SELASA", practiceStart: "08:00", practiceEnd: "10:00" },
-  { name: "dr. Eko Wijaya", outlet: "RS Bhayangkara", practiceDays: "SELASA,KAMIS", practiceStart: "09:00", practiceEnd: "11:00" },
-  { name: "dr. Fitri Handayani", outlet: "Klinik Harapan", practiceDays: "RABU", practiceStart: "13:00", practiceEnd: "15:00" },
-  { name: "dr. Gilang Ramadhan", outlet: "Puskesmas Sukamaju", practiceDays: "KAMIS", practiceStart: "09:00", practiceEnd: "12:00" },
-  { name: "dr. Hesti Puspita", outlet: "RS Bhayangkara", practiceDays: "JUMAT", practiceStart: "08:30", practiceEnd: "11:00" },
-  { name: "dr. Irfan Hakim", outlet: "Klinik Medika", practiceDays: "JUMAT", practiceStart: "09:00", practiceEnd: "10:00" },
-  { name: "dr. Joko Susilo", outlet: "Puskesmas Sukamaju", practiceDays: "SABTU", practiceStart: "08:00", practiceEnd: "12:00" }, // Sabtu half-day
-  { name: "dr. Kurnia Sari", outlet: "Klinik Harapan", practiceDays: "SABTU", practiceStart: "09:00", practiceEnd: "11:00" },
-  { name: "dr. Lina Marlina", outlet: "RS Bhayangkara", practiceDays: "SENIN,SELASA", practiceStart: "13:00", practiceEnd: "16:00" },
-  { name: "dr. Maman Suryadi", outlet: "Puskesmas Sukamaju", practiceDays: "RABU,KAMIS", practiceStart: "09:00", practiceEnd: "11:00" },
-  { name: "dr. Nia Ramadhani", outlet: "Klinik Sehat", practiceDays: "KAMIS,JUMAT", practiceStart: "10:00", practiceEnd: "12:00" },
-  { name: "dr. Oki Setiawan", outlet: "Klinik Medika", practiceDays: "SELASA", practiceStart: "14:00", practiceEnd: "16:00" },
-  { name: "dr. Putri Ayu", outlet: "Puskesmas Sukamaju", practiceDays: "JUMAT", practiceStart: "08:00", practiceEnd: "10:00" },
-];
+type SeedSchedule = { day: string; startTime: string; endTime: string };
+type SeedDoctor = {
+  name: string;
+  outlet: string;
+  schedules: SeedSchedule[];
+  flexible?: boolean;
+};
 
 async function main() {
-  // Kosongkan dulu
+  // Bersihkan data lama (relasi Schedule ter-cascade)
   await prisma.doctor.deleteMany({});
+  console.log("Data lama dibersihkan");
+
+  const seedFile = path.join(__dirname, "seed-data", "selatan.json");
+  let doctors: SeedDoctor[];
+  try {
+    doctors = JSON.parse(fs.readFileSync(seedFile, "utf8"));
+  } catch {
+    console.log("File seed real tidak ditemukan, pakai fallback data contoh.");
+    doctors = fallback();
+  }
+
   let pos = 1;
   for (const d of doctors) {
-    await prisma.doctor.create({ data: { ...d, scheduledDay: null, position: pos++ } });
+    if (!d.name || !d.outlet || !d.schedules?.length) continue;
+    await prisma.doctor.create({
+      data: {
+        name: d.name,
+        outlet: d.outlet,
+        scheduledDay: null,
+        position: pos++,
+        flexible: d.flexible === true,
+        schedules: { create: d.schedules },
+      },
+    });
   }
-  console.log(`Seeded ${doctors.length} dokter (semua di Pool)`);
+
+  console.log(`Seeded ${pos - 1} dokter dari data area selatan (semua di Pool)`);
+}
+
+// Fallback kecil kalau file seed real tidak ada
+function fallback(): SeedDoctor[] {
+  return [
+    {
+      name: "dr. Andi Pratama",
+      outlet: "Puskesmas Sukamaju",
+      schedules: [
+        { day: "SENIN", startTime: "09:00", endTime: "11:00" },
+        { day: "RABU", startTime: "09:00", endTime: "11:00" },
+      ],
+    },
+    {
+      name: "dr. Budi Santoso",
+      outlet: "Puskesmas Sukamaju",
+      schedules: [{ day: "SENIN", startTime: "09:30", endTime: "11:30" }],
+    },
+    {
+      name: "dr. Citra Lestari",
+      outlet: "Klinik Sehat",
+      schedules: [{ day: "SENIN", startTime: "10:00", endTime: "12:00" }],
+    },
+  ];
 }
 
 main()

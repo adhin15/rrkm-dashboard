@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Board from "@/components/Board";
-import { DAY_ORDER, type DayKey } from "@/lib/types";
+import type { DayKey } from "@/lib/types";
 
 // Wajib: hindari static generation error saat DB kosong di fase build (Docker)
 export const dynamic = "force-dynamic";
@@ -10,16 +10,9 @@ export const metadata = {
   description: "Perencanaan rute kunjungan mingguan dokter (RRKM)",
 };
 
-function parseDays(raw: string): DayKey[] {
-  return raw
-    .toUpperCase()
-    .split(",")
-    .map((s) => s.trim())
-    .filter((s) => DAY_ORDER.includes(s as DayKey)) as DayKey[];
-}
-
 export default async function Home() {
   const dbDoctors = await prisma.doctor.findMany({
+    include: { schedules: true },
     orderBy: [{ scheduledDay: "asc" }, { position: "asc" }, { name: "asc" }],
   });
 
@@ -27,11 +20,15 @@ export default async function Home() {
     id: d.id,
     name: d.name,
     outlet: d.outlet,
-    practiceDays: parseDays(d.practiceDays),
-    practiceStart: d.practiceStart,
-    practiceEnd: d.practiceEnd,
+    schedules: (d.schedules ?? []).map((s) => ({
+      day: s.day as DayKey,
+      startTime: s.startTime,
+      endTime: s.endTime,
+    })),
     scheduledDay: d.scheduledDay as DayKey | null,
     position: d.position,
+    flexible: d.flexible,
+    visited: d.visited,
   }));
 
   return (

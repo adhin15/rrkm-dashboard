@@ -13,17 +13,34 @@ datasource db {
 // Dokter (card) pada kanban board RRKM
 // scheduledDay = null berarti masih di kolom "Pool" (belum dijadwalkan)
 model Doctor {
-  id            String   @id @default(cuid())
-  name          String
-  outlet        String
-  // Hari praktek dokter, format CSV, misal "SENIN,RABU"
-  practiceDays  String
-  // Jam praktek, format "HH:mm", misal "09:00"
-  practiceStart String
-  practiceEnd   String
+  id           String     @id @default(cuid())
+  name         String
+  outlet       String
   // Hari dijadwalkan, null = Pool. Nilai salah satu dari SENIN..SABTU
-  scheduledDay  String?
+  scheduledDay String?
   // Urutan card di dalam kolom (untuk drag & drop)
-  position      Int      @default(0)
-  createdAt     DateTime @default(now())
+  position     Int        @default(0)
+  // Jadwal fleksibel = jam tidak pasti (mis. "setiap hari" tanpa jam).
+  // Dokter flexible TIDAK ikut dihitung untuk deteksi tabrakan waktu.
+  flexible     Boolean    @default(false)
+  // Sudah dikunjungi/done. Tetap ikut hitungan tabrakan, tapi card-nya
+  // tidak menampilkan indikator warna collision.
+  visited      Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  // Jadwal praktek dokter (bisa beda jam per hari, bisa multi-sesi per hari)
+  schedules    Schedule[]
+}
+
+// Jadwal praktek dokter per hari.
+// 1 dokter punya banyak Schedule (mis. Senin 09-13, Selasa 14-16).
+// Bisa lebih dari 1 sesi di hari yang sama (mis. Senin 10-12 DAN 16-17).
+model Schedule {
+  id        String @id @default(cuid())
+  doctorId  String
+  doctor    Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  day       String // SENIN | SELASA | RABU | KAMIS | JUMAT | SABTU
+  startTime String // "HH:mm"
+  endTime   String // "HH:mm"
+
+  @@index([doctorId])
 }

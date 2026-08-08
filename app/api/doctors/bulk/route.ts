@@ -1,17 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { DAY_ORDER, type DayKey } from "@/lib/types";
+import { DAY_ORDER, type DayKey, type ScheduleDTO } from "@/lib/types";
 
-function parseDays(raw: string): DayKey[] {
-  return raw
-    .toUpperCase()
-    .split(",")
-    .map((s) => s.trim())
-    .filter((s) => DAY_ORDER.includes(s as DayKey)) as DayKey[];
+function normalizeSchedules(schedules: unknown): ScheduleDTO[] {
+  if (!Array.isArray(schedules)) return [];
+  const valid: ScheduleDTO[] = [];
+  for (const s of schedules) {
+    const day = (s?.day ?? "").toUpperCase();
+    if (!DAY_ORDER.includes(day as DayKey)) continue;
+    const start = String(s?.startTime ?? "").trim();
+    const end = String(s?.endTime ?? "").trim();
+    if (!/^\d{1,2}:\d{2}$/.test(start) || !/^\d{1,2}:\d{2}$/.test(end)) continue;
+    const [sh, sm] = start.split(":").map(Number);
+    const [eh, em] = end.split(":").map(Number);
+    if (sh * 60 + sm >= eh * 60 + em) continue;
+    valid.push({ day: day as DayKey, startTime: `${String(sh).padStart(2, "0")}:${String(sm).padStart(2, "0")}`, endTime: `${String(eh).padStart(2, "0")}:${String(em).padStart(2, "0")}` });
+  }
+  return valid;
 }
 
 // ===== POST /api/doctors/bulk — import banyak dokter dari Excel =====
-// Body: { doctors: [{ name, outlet, practiceDays, practiceStart, practiceEnd }] }
+// Body: { doctors: [{ name, outlet, schedules: [{day,startTime,endTime}] }] }
 export async function POST(request: NextRequest) {
   const body = await request.json();
   const doctors = Array.isArray(body?.doctors) ? body.doctors : [];
@@ -23,7 +32,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Ambil posisi awal terakhir di Pool supaya tidak tabrakan
   const maxPos = await prisma.doctor.aggregate({
     _max: { position: true },
     where: { scheduledDay: null },
@@ -36,9 +44,10 @@ export async function POST(request: NextRequest) {
   for (const row of doctors) {
     const name = (row.name ?? "").toString().trim();
     const outlet = (row.outlet ?? "").toString().trim();
-    const days = parseDays((row.practiceDays ?? "").toString());
+    const schedules = normalizeSchedules(row.schedules);
+    const flexible = row.flexible === true;
 
-    if (!name || !outlet || days.length === 0 || !row.practiceStart || !row.practiceEnd) {
+    if (!name || !outlet || schedules.length === 0) {
       skipped.push(name || "(tanpa nama)");
       continue;
     }
@@ -47,11 +56,10 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         outlet,
-        practiceDays: days.join(","),
-        practiceStart: row.practiceStart.toString(),
-        practiceEnd: row.practiceEnd.toString(),
         scheduledDay: null,
         position: nextPos++,
+        flexible,
+        schedules: { create: schedules },
       },
     });
     created.push(doctor);

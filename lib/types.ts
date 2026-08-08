@@ -32,16 +32,34 @@ export const DAY_LABEL: Record<DayKey, { short: string; long: string }> = {
 export const SATURDAY_END = "12:00";
 export const MIN_DOCTORS_PER_DAY = 10;
 
+// Satu sesi jadwal praktek (dalam satu hari)
+export interface ScheduleDTO {
+  day: DayKey;
+  startTime: string; // "HH:mm"
+  endTime: string; // "HH:mm"
+}
+
 // Representasi Doctor yang dipakai di client (serializable)
 export interface DoctorDTO {
   id: string;
   name: string;
   outlet: string;
-  practiceDays: DayKey[];
-  practiceStart: string; // "HH:mm"
-  practiceEnd: string; // "HH:mm"
+  schedules: ScheduleDTO[]; // jadwal per hari (bisa multi-sesi per hari)
   scheduledDay: DayKey | null;
   position: number;
+  flexible: boolean; // true = jam tidak pasti, tidak ikut deteksi tabrakan
+  visited: boolean; // true = sudah dikunjungi/done
+}
+
+// Helper: jadwal dokter untuk hari tertentu (bisa kosong / multi-sesi)
+export function schedulesOnDay(doctor: DoctorDTO, day: DayKey): ScheduleDTO[] {
+  return doctor.schedules.filter((s) => s.day === day);
+}
+
+// Helper: hari-hari praktek dokter (unique, sesuai urutan DAY_ORDER)
+export function practiceDaysOf(doctor: DoctorDTO): DayKey[] {
+  const set = new Set<DayKey>(doctor.schedules.map((s) => s.day));
+  return DAY_ORDER.filter((d) => set.has(d));
 }
 
 // Hasil evaluasi state sebuah card

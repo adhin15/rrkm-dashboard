@@ -1,22 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import {
   DndContext,
-  closestCorners,
+  pointerWithin,
   PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import KanbanColumn from "./KanbanColumn";
 import { DAY_ORDER, type DayKey, type DoctorDTO } from "@/lib/types";
 import { isPracticingOn } from "@/lib/collision";
+import { passesFilter, sortDoctors, type SortOption } from "@/lib/filters";
 
 // Kolom: 6 hari + 1 Pool (diwakili string "POOL")
 const POOL = "POOL" as const;
@@ -26,6 +27,12 @@ interface Props {
   doctors: DoctorDTO[];
   onMove: (id: string, targetDay: DayKey | null) => Promise<boolean>;
   onDelete: (id: string) => void;
+  onToggleFlexible: (id: string) => void;
+  onOpenDetail: (card: DoctorDTO) => void;
+  filterDays: DayKey[];
+  filterStart: string;
+  filterEnd: string;
+  sortBy: SortOption;
 }
 
 // Kelompokkan dokter per kolom
@@ -46,15 +53,46 @@ function groupByColumn(doctors: DoctorDTO[]) {
   return groups;
 }
 
-export default function KanbanBoard({ doctors, onMove, onDelete }: Props) {
+export default function KanbanBoard({
+  doctors,
+  onMove,
+  onDelete,
+  onToggleFlexible,
+  onOpenDetail,
+  filterDays,
+  filterStart,
+  filterEnd,
+  sortBy,
+}: Props) {
   const [toast, setToast] = useState<string | null>(null);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  // dnd-kit (DndContext/useSortable) punya ID internal yang berbeda antara
+  // render server vs client → hydration mismatch yang merusak drag.
+  // Solusi: render board hanya setelah mount di client (via useSyncExternalStore).
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
   );
 
-  const groups = groupByColumn(doctors);
-  const allIds = doctors.map((d) => d.id);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 200, tolerance: 5 },
+    })
+  );
+
+  const filteredDoctors = doctors.filter((d) =>
+    passesFilter(d, filterDays, filterStart, filterEnd)
+  );
+  const groups = groupByColumn(filteredDoctors);
+
+  // Sort setiap kolom (kecuali Pool — biarkan urutan drag)
+  const sortedGroups = { ...groups };
+  for (const day of DAY_ORDER) {
+    sortedGroups[day] = sortDoctors(groups[day], sortBy);
+  }
+  sortedGroups.POOL = groups.POOL;
 
   function showToast(msg: string) {
     setToast(msg);
@@ -126,23 +164,34 @@ export default function KanbanBoard({ doctors, onMove, onDelete }: Props) {
         </div>
       )}
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={allIds}>
-          <div className="flex gap-3 overflow-x-auto pb-4">
+      {!mounted ? (
+        // Placeholder statis sampai mount — mencegah hydration mismatch dnd-kit
+        <div className="flex gap-3 overflow-x-auto pb-4">
+          {[null, ...DAY_ORDER].map((_, i) => (
+            <div key={i} className="min-w-[240px] flex-1 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
+              <div className="h-3 w-16 rounded bg-zinc-800" />
+              <div className="mt-3 h-16 rounded-lg bg-zinc-800/60" />
+              <div className="mt-2 h-16 rounded-lg bg-zinc-800/60" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={pointerWithin}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="flex items-start gap-3 overflow-x-auto pb-4">
             {/* Kolom Pool dulu */}
-            <KanbanColumn day="POOL" cards={groups.POOL} isPool onDelete={onDelete} />
+            <KanbanColumn day="POOL" cards={sortedGroups.POOL} isPool onDelete={onDelete} onToggleFlexible={onToggleFlexible} onOpenDetail={onOpenDetail} />
 
             {/* Kolom hari */}
             {DAY_ORDER.map((day) => (
-              <KanbanColumn key={day} day={day} cards={groups[day]} onDelete={onDelete} />
+              <KanbanColumn key={day} day={day} cards={sortedGroups[day]} onDelete={onDelete} onToggleFlexible={onToggleFlexible} onOpenDetail={onOpenDetail} />
             ))}
           </div>
-        </SortableContext>
-      </DndContext>
+        </DndContext>
+      )}
     </div>
   );
 }

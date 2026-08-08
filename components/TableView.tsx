@@ -1,6 +1,6 @@
 "use client";
 
-import { DAY_ORDER, DAY_LABEL, type DayKey, type DoctorDTO } from "@/lib/types";
+import { DAY_ORDER, DAY_LABEL, type DoctorDTO } from "@/lib/types";
 import { getCardState } from "@/lib/collision";
 
 interface Props {
@@ -65,7 +65,10 @@ export default function TableView({ doctors }: Props) {
                       <td className="px-4 py-2 font-medium text-zinc-100">{card.name}</td>
                       <td className="px-4 py-2 text-zinc-400">{card.outlet}</td>
                       <td className="px-4 py-2 text-zinc-400">
-                        {card.practiceStart}–{card.practiceEnd}
+                        {card.schedules
+                          .filter((s) => s.day === day)
+                          .map((s) => `${s.startTime}–${s.endTime}`)
+                          .join(", ")}
                       </td>
                       <td className={`px-4 py-2 ${STATE_TEXT[issue.state]}`}>
                         {issue.message}

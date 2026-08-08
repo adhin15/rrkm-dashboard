@@ -2,8 +2,9 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Trash2 } from "lucide-react";
-import type { DoctorDTO, CardState, DayKey } from "@/lib/types";
+import { Trash2, Clock, Check } from "lucide-react";
+import type { DoctorDTO, CardState } from "@/lib/types";
+import { practiceDaysOf, DAY_LABEL } from "@/lib/types";
 import type { CardIssue } from "@/lib/collision";
 
 // Map state -> kelas warna card
@@ -23,12 +24,13 @@ const STATE_BADGE: Record<CardState, { label: string; cls: string } | null> = {
 
 interface Props {
   card: DoctorDTO;
-  columnDay: DayKey;
   issue: CardIssue;
   onDelete: (id: string) => void;
+  onToggleFlexible: (id: string) => void;
+  onOpenDetail: (card: DoctorDTO) => void;
 }
 
-export default function DoctorCard({ card, columnDay, issue, onDelete }: Props) {
+export default function DoctorCard({ card, issue, onDelete, onToggleFlexible, onOpenDetail }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: card.id });
 
@@ -38,29 +40,44 @@ export default function DoctorCard({ card, columnDay, issue, onDelete }: Props) 
   };
 
   const badge = STATE_BADGE[issue.state];
+  const days = practiceDaysOf(card);
 
   return (
     <div
       ref={setNodeRef}
       style={style}
       title={issue.message}
-      className={`group relative rounded-lg border px-3 py-2.5 shadow-sm transition-colors ${STATE_STYLES[issue.state]} ${
+      onClick={() => onOpenDetail(card)}
+      className={`group relative cursor-grab rounded-lg border px-3 py-2.5 shadow-sm transition-colors active:cursor-grabbing ${STATE_STYLES[issue.state]} ${
         isDragging ? "z-50 opacity-90 ring-2 ring-cyan-400" : "hover:border-zinc-500"
-      }`}
+      } ${card.visited ? "opacity-80" : ""}`}
       {...attributes}
       {...listeners}
     >
-      {/* Drag handle */}
-      <button
-        className="absolute left-1 top-1/2 -translate-y-1/2 cursor-grab text-zinc-600 hover:text-zinc-300 active:cursor-grabbing"
-        aria-label="Drag"
-      >
-        <GripVertical size={15} />
-      </button>
-
-      <div className="pl-4">
-        <div className="flex items-start justify-between gap-2">
-          <p className="text-sm font-medium text-zinc-100">{card.name}</p>
+      {/* Corner hijau untuk visited */}
+      {card.visited && (
+        <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-bl-lg border-b border-l border-zinc-800 bg-emerald-400 text-zinc-950">
+          <Check size={12} strokeWidth={3} />
+        </span>
+      )}
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-sm font-medium text-zinc-100">{card.name}</p>
+        <div className="flex shrink-0 items-center gap-0.5">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFlexible(card.id);
+            }}
+            className={`rounded p-0.5 transition-colors group-hover:opacity-100 ${
+              card.flexible
+                ? "text-amber-300 opacity-100"
+                : "text-zinc-600 opacity-0 hover:text-amber-300"
+            }`}
+            title={card.flexible ? "Jadwal fleksibel (klik untuk matikan)" : "Tandai jadwal fleksibel"}
+            aria-label={card.flexible ? "Jadwal fleksibel" : "Tandai fleksibel"}
+          >
+            <Clock size={14} />
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -72,18 +89,39 @@ export default function DoctorCard({ card, columnDay, issue, onDelete }: Props) 
             <Trash2 size={14} />
           </button>
         </div>
-        <p className="text-xs text-zinc-400">{card.outlet}</p>
-        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-          <span className="rounded bg-zinc-700/50 px-1.5 py-0.5 text-[10px] font-medium text-zinc-300">
-            {card.practiceStart}–{card.practiceEnd}
-          </span>
-          {badge && (
-            <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${badge.cls}`}>
-              {badge.label}
-            </span>
-          )}
-        </div>
       </div>
+
+      <p className="text-xs text-zinc-400">{card.outlet}</p>
+
+      {/* Badge fleksibel */}
+      {card.flexible && (
+        <span className="mt-1.5 inline-flex items-center gap-1 rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300">
+          <Clock size={10} /> Fleksibel
+        </span>
+      )}
+
+      {/* Jadwal per hari: <Sen 09:00-13:00> <Sel 09:00-14:00> ... */}
+      <div className="mt-1.5 flex flex-wrap gap-1">
+        {days.map((d) => {
+          const scheds = card.schedules.filter((s) => s.day === d);
+          return (
+            <span
+              key={d}
+              className="rounded bg-cyan-500/15 px-1.5 py-0.5 text-[10px] font-medium text-cyan-300"
+              title={scheds.map((s) => `${s.startTime}-${s.endTime}`).join(" & ")}
+            >
+              {DAY_LABEL[d].short}
+              {scheds.map((s) => ` ${s.startTime}-${s.endTime}`).join("")}
+            </span>
+          );
+        })}
+      </div>
+
+      {badge && (
+        <span className={`mt-1.5 inline-block rounded px-1.5 py-0.5 text-[10px] font-medium ${badge.cls}`}>
+          {badge.label}
+        </span>
+      )}
     </div>
   );
 }

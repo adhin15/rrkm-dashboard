@@ -1,0 +1,1533 @@
+[
+ {
+  "name": "SAPTO PRIATMO",
+  "outlet": "RS BETHESDA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "09:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "09:00",
+    "endTime": "11:00"
+   }
+  ]
+ },
+ {
+  "name": "MARWANI BRATASAPUTRA",
+  "outlet": "RS BETHESDA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "08:30",
+    "endTime": "12:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "09:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "08:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "SENIN",
+    "startTime": "16:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "09:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "16:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "16:00",
+    "endTime": "17:00"
+   }
+  ]
+ },
+ {
+  "name": "HARIATMOKO",
+  "outlet": "RS BETHESDA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   }
+  ]
+ },
+ {
+  "name": "JB SUHARJO BRATA CAHYONO",
+  "outlet": "RS BETHESDA",
+  "schedules": [
+   {
+    "day": "SELASA",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   }
+  ]
+ },
+ {
+  "name": "LISA KURNIA SARI",
+  "outlet": "RS BETHESDA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "08:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "08:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "08:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "08:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "15:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "14:00",
+    "endTime": "16:00"
+   }
+  ]
+ },
+ {
+  "name": "WIWIEK PROBOWATI",
+  "outlet": "RS BETHESDA",
+  "schedules": [
+   {
+    "day": "SELASA",
+    "startTime": "08:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "12:00",
+    "endTime": "16:00"
+   },
+   {
+    "day": "SENIN",
+    "startTime": "14:00",
+    "endTime": "15:30"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "07:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "10:30",
+    "endTime": "12:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "12:15",
+    "endTime": "14:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "12:15",
+    "endTime": "15:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "12:00",
+    "endTime": "15:00"
+   }
+  ]
+ },
+ {
+  "name": "PURWOADI SUJATNO",
+  "outlet": "RS BETHESDA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "09:30",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "08:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "08:00",
+    "endTime": "09:30"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "08:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SENIN",
+    "startTime": "14:00",
+    "endTime": "16:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "08:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "12:00",
+    "endTime": "16:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "10:30",
+    "endTime": "13:30"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "14:00",
+    "endTime": "16:00"
+   }
+  ]
+ },
+ {
+  "name": "GITA ANGGRENI",
+  "outlet": "RS BETHESDA",
+  "schedules": [
+   {
+    "day": "SELASA",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "SENIN",
+    "startTime": "13:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "09:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "13:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "13:00",
+    "endTime": "15:00"
+   }
+  ]
+ },
+ {
+  "name": "THERESIA AVILLA RIRIEL KUSUMOSIH",
+  "outlet": "RS BETHESDA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "09:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "09:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "SENIN",
+    "startTime": "13:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "13:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "09:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "13:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "16:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "13:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "13:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "16:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "16:00",
+    "endTime": "17:00"
+   }
+  ]
+ },
+ {
+  "name": "MOHAMMAD ZACKY ARDA",
+  "outlet": "KLINIK ARDA",
+  "schedules": [
+   {
+    "day": "SELASA",
+    "startTime": "16:00",
+    "endTime": "17:30"
+   },
+   {
+    "day": "SENIN",
+    "startTime": "18:30",
+    "endTime": "20:30"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "16:00",
+    "endTime": "17:30"
+   },
+   {
+    "day": "RABU",
+    "startTime": "18:30",
+    "endTime": "20:30"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "15:00",
+    "endTime": "16:30"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "18:30",
+    "endTime": "20:30"
+   }
+  ]
+ },
+ {
+  "name": "AZLANSYAH",
+  "outlet": "KLINIK ARDA",
+  "schedules": [
+   {
+    "day": "SELASA",
+    "startTime": "18:00",
+    "endTime": "20:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "18:00",
+    "endTime": "20:00"
+   }
+  ]
+ },
+ {
+  "name": "LULU IRLIANA",
+  "outlet": "KLINIK ARDA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "16:30",
+    "endTime": "18:30"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "16:30",
+    "endTime": "18:30"
+   },
+   {
+    "day": "RABU",
+    "startTime": "16:30",
+    "endTime": "18:30"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "16:30",
+    "endTime": "18:30"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "16:30",
+    "endTime": "18:30"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "15:00",
+    "endTime": "16:30"
+   }
+  ]
+ },
+ {
+  "name": "MANUSAMA HASAN SABANA",
+  "outlet": "KLINIK ARDA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "15:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "15:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "18:00",
+    "endTime": "20:00"
+   }
+  ]
+ },
+ {
+  "name": "ENDANG WIDIASTUTI",
+  "outlet": "RS KOTA JOGJA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "08:00",
+    "endTime": "14:30"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "08:00",
+    "endTime": "14:30"
+   },
+   {
+    "day": "RABU",
+    "startTime": "08:00",
+    "endTime": "14:30"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "08:00",
+    "endTime": "14:30"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "08:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "08:00",
+    "endTime": "12:00"
+   }
+  ]
+ },
+ {
+  "name": "ANGGIA ENDAH SATUTI",
+  "outlet": "RS KOTA JOGJA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "07:30",
+    "endTime": "14:30"
+   },
+   {
+    "day": "RABU",
+    "startTime": "07:30",
+    "endTime": "14:30"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "07:30",
+    "endTime": "14:30"
+   }
+  ]
+ },
+ {
+  "name": "YUNADA HADIYONO",
+  "outlet": "RS KOTA JOGJA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "09:00",
+    "endTime": "14:30"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "09:00",
+    "endTime": "14:30"
+   }
+  ]
+ },
+ {
+  "name": "V.NOEGROHO ISTI DONODJATI",
+  "outlet": "RS KOTA JOGJA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "08:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "07:30",
+    "endTime": "13:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "07:30",
+    "endTime": "13:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "07:30",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "07:30",
+    "endTime": "13:00"
+   }
+  ]
+ },
+ {
+  "name": "Rivadin Nurwan",
+  "outlet": "RS KOTA JOGJA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   }
+  ]
+ },
+ {
+  "name": "ROSSY WINATA",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "12:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "16:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "13:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "16:00",
+    "endTime": "18:00"
+   }
+  ]
+ },
+ {
+  "name": "SOEROYO MACHFUDZ",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "11:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "11:00",
+    "endTime": "13:00"
+   }
+  ]
+ },
+ {
+  "name": "NIARNA LUSI",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "11:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "11:00",
+    "endTime": "14:00"
+   }
+  ]
+ },
+ {
+  "name": "H. MOHAMMAD KOMARUDDIN",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "14:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "09:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "14:00",
+    "endTime": "17:00"
+   }
+  ]
+ },
+ {
+  "name": "DICKY MOCH RIZAL",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "SELASA",
+    "startTime": "15:30",
+    "endTime": "17:30"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "15:30",
+    "endTime": "17:30"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "15:30",
+    "endTime": "17:30"
+   }
+  ]
+ },
+ {
+  "name": "MOH  WIBOWO",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "08:30",
+    "endTime": "10:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "08:30",
+    "endTime": "10:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "08:30",
+    "endTime": "10:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "10:00",
+    "endTime": "14:00"
+   }
+  ]
+ },
+ {
+  "name": "SULISTIARI RETNOWATI",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "10:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "10:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "09:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "14:30",
+    "endTime": "15:30"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "14:30",
+    "endTime": "15:30"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "18:00",
+    "endTime": "19:00"
+   }
+  ]
+ },
+ {
+  "name": "SUPRIYATININGSIH",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "11:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "08:00",
+    "endTime": "09:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "12:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "14:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "14:00",
+    "endTime": "16:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "14:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "14:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "18:00",
+    "endTime": "19:00"
+   }
+  ]
+ },
+ {
+  "name": "BAMBANG EDY SUSYANTO",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "RABU",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "11:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SENIN",
+    "startTime": "13:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   }
+  ]
+ },
+ {
+  "name": "EVITA DEVI",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "JUMAT",
+    "startTime": "08:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "14:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "13:00",
+    "endTime": "15:00"
+   }
+  ]
+ },
+ {
+  "name": "BARKAH DJAKA PURNAMA",
+  "outlet": "RS PKU GAMPING",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "13:30",
+    "endTime": "17:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "13:30",
+    "endTime": "17:00"
+   }
+  ]
+ },
+ {
+  "name": "ESTYA DEWI WIDYASARI",
+  "outlet": "RS SILOAM",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "10:00",
+    "endTime": "11:30"
+   },
+   {
+    "day": "RABU",
+    "startTime": "09:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "09:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "16:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "15:00",
+    "endTime": "18:00"
+   }
+  ]
+ },
+ {
+  "name": "JOYO SANTOSO",
+  "outlet": "RS SILOAM",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "07:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "07:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "07:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "07:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "07:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "SENIN",
+    "startTime": "14:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "07:00",
+    "endTime": "11:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "14:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "14:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "14:00",
+    "endTime": "15:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "11:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "14:00",
+    "endTime": "15:00"
+   }
+  ]
+ },
+ {
+  "name": "DANNY WIGUNA",
+  "outlet": "RS SILOAM",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "16:00",
+    "endTime": "20:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "16:00",
+    "endTime": "20:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "16:00",
+    "endTime": "20:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "17:00",
+    "endTime": "19:00"
+   }
+  ]
+ },
+ {
+  "name": "CHATARINA TRI WIKATMANI",
+  "outlet": "RS SILOAM",
+  "schedules": [
+   {
+    "day": "RABU",
+    "startTime": "16:00",
+    "endTime": "18:00"
+   }
+  ]
+ },
+ {
+  "name": "Eduardus Raditya Kusuma Putra",
+  "outlet": "RS SILOAM",
+  "schedules": [
+   {
+    "day": "SELASA",
+    "startTime": "11:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "11:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "11:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "11:00",
+    "endTime": "13:00"
+   },
+   {
+    "day": "SENIN",
+    "startTime": "19:00",
+    "endTime": "21:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "11:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "18:00",
+    "endTime": "21:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "18:00",
+    "endTime": "21:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "18:00",
+    "endTime": "21:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "18:00",
+    "endTime": "21:00"
+   }
+  ]
+ },
+ {
+  "name": "DONI PRIAMBODO W",
+  "outlet": "RS Panti rapih",
+  "schedules": [
+   {
+    "day": "RABU",
+    "startTime": "16:30",
+    "endTime": "17:30"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "16:30",
+    "endTime": "17:30"
+   }
+  ]
+ },
+ {
+  "name": "AGUS FITRIYANTO ACHMAD",
+  "outlet": "JIH",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "16:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "16:00",
+    "endTime": "18:00"
+   }
+  ]
+ },
+ {
+  "name": "HERJUNA HARDIYANTO",
+  "outlet": "RSPAU HARDJOLUKITO",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "16:30",
+    "endTime": "19:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "16:30",
+    "endTime": "19:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "16:30",
+    "endTime": "19:00"
+   }
+  ]
+ },
+ {
+  "name": "R.TRIYONO EDHI S",
+  "outlet": "RSPAU HARDJOLUKITO",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "09:00",
+    "endTime": "14:00"
+   }
+  ]
+ },
+ {
+  "name": "SASMITO NUGROHO",
+  "outlet": "RS PKU BANTUL",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "16:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "16:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "16:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "16:00",
+    "endTime": "18:00"
+   }
+  ]
+ },
+ {
+  "name": "SUMARDI",
+  "outlet": "RS PKU BANTUL",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "15:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "14:00",
+    "endTime": "16:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "15:00",
+    "endTime": "17:00"
+   }
+  ]
+ },
+ {
+  "name": "ZAINUL ARIFIN",
+  "outlet": "RS PKU BANTUL",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "13:30",
+    "endTime": "17:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "13:30",
+    "endTime": "17:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "13:30",
+    "endTime": "17:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "13:30",
+    "endTime": "17:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "13:30",
+    "endTime": "17:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "13:30",
+    "endTime": "17:00"
+   }
+  ]
+ },
+ {
+  "name": "NENENG RATNASARI",
+  "outlet": "RS PKU BANTUL",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "17:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "17:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "17:00",
+    "endTime": "18:00"
+   }
+  ]
+ },
+ {
+  "name": "NOVI WIJAYANTI SUKIRTO",
+  "outlet": "RS PKU BANTUL",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "10:00",
+    "endTime": "14:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "10:00",
+    "endTime": "12:00"
+   }
+  ]
+ },
+ {
+  "name": "MUCHAMAD ANWAR",
+  "outlet": "JIH",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "08:00",
+    "endTime": "10:00"
+   }
+  ]
+ },
+ {
+  "name": "KRISMA KURNIA",
+  "outlet": "RS LEMPUYANGWANGI",
+  "schedules": [
+   {
+    "day": "JUMAT",
+    "startTime": "14:00",
+    "endTime": "17:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "14:00",
+    "endTime": "16:00"
+   }
+  ]
+ },
+ {
+  "name": "BUDI AGUNG",
+  "outlet": "KLINIK GADING",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   }
+  ],
+  "flexible": true
+ },
+ {
+  "name": "ARDIJANTO",
+  "outlet": "APT RATNA",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "18:00",
+    "endTime": "19:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "18:00",
+    "endTime": "19:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "18:00",
+    "endTime": "19:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "18:00",
+    "endTime": "19:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "18:00",
+    "endTime": "19:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "18:00",
+    "endTime": "19:00"
+   }
+  ]
+ },
+ {
+  "name": "Imanuela",
+  "outlet": "KDE",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "13:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "13:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "13:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "13:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "13:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "13:00",
+    "endTime": "18:00"
+   }
+  ]
+ },
+ {
+  "name": "ERICK YUANE",
+  "outlet": "Rajawali, JIH",
+  "schedules": [
+   {
+    "day": "SENIN",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "SELASA",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "RABU",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "KAMIS",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "JUMAT",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   },
+   {
+    "day": "SABTU",
+    "startTime": "09:00",
+    "endTime": "18:00"
+   }
+  ],
+  "flexible": true
+ }
+]

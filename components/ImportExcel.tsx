@@ -3,13 +3,14 @@
 import { useRef, useState } from "react";
 import { Upload, FileSpreadsheet } from "lucide-react";
 import * as XLSX from "xlsx";
+import type { DayKey } from "@/lib/types";
 
 interface Props {
   onImported: () => void;
 }
 
-// Header yang dikenali
-const DAY_ALIAS: Record<string, string[]> = {
+// Map hari (multi bahasa) -> DayKey
+const DAY_ALIAS: Record<DayKey, string[]> = {
   SENIN: ["SENIN", "MON", "MONDAY"],
   SELASA: ["SELASA", "TUE", "TUESDAY"],
   RABU: ["RABU", "WED", "WEDNESDAY"],
@@ -18,11 +19,53 @@ const DAY_ALIAS: Record<string, string[]> = {
   SABTU: ["SABTU", "SAT", "SATURDAY"],
 };
 
+function parseDay(s: string): DayKey | null {
+  const up = s.trim().toUpperCase();
+  for (const [code, aliases] of Object.entries(DAY_ALIAS)) {
+    if (aliases.includes(up)) return code as DayKey;
+  }
+  return null;
+}
+
+function parseTime(s: string): string | null {
+  const m = s.trim().match(/^(\d{1,2})[.:](\d{2})$/);
+  if (m) return `${Number(m[1]).toString().padStart(2, "0")}:${m[2]}`;
+  return null;
+}
+
+// Parse sel text jadwal: "Senin : 09.00 - 13.00 dan 16.00 - 17.00"
+// atau format flat "09.00" / "13.00" per kolom. Mengembalikan array schedule.
+function parseScheduleText(raw: string): { day: DayKey; startTime: string; endTime: string }[] {
+  const out: { day: DayKey; startTime: string; endTime: string }[] = [];
+  const parts = raw.split(/[;,|]/).filter(Boolean);
+  for (const part of parts) {
+    const m = part.match(/^([A-Za-z]+)\s*:\s*(.+)$/);
+    if (!m) continue;
+    const day = parseDay(m[1]);
+    if (!day) continue;
+    const rest = m[2];
+    // sesi dipisah "dan"
+    for (const sess of rest.split(/\s+dan\s+/)) {
+      const tm = sess.match(/^\s*(\d{1,2}[.:]\d{2})\s*[-–]\s*(\d{1,2}[.:]\d{2}|selesai|sampai)\s*$/i);
+      if (!tm) continue;
+      const start = parseTime(tm[1]);
+      let end = parseTime(tm[2]);
+      if (!end && /selesai|sampai/i.test(tm[2])) {
+        // asumsi "selesai" = +2 jam dari start
+        const [h, mnt] = start!.split(":").map(Number);
+        end = `${String(((h * 60 + mnt + 120) / 60) | 0).padStart(2, "0")}:${String(((h * 60 + mnt + 120) % 60)).padStart(2, "0")}`;
+      }
+      if (start && end) out.push({ day, startTime: start, endTime: end });
+    }
+  }
+  return out;
+}
+
 export default function ImportExcel({ onImported }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [headers, setHeaders] = useState<string[]>([]);
   const [rows, setRows] = useState<Record<string, unknown>[]>([]);
-  const [mapping, setMapping] = useState({ name: "", outlet: "", days: "", start: "", end: "" });
+  const [mapping, setMapping] = useState({ name: "", outlet: "", schedule: "" });
   const [msg, setMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -41,9 +84,9 @@ export default function ImportExcel({ onImported }: Props) {
           setMsg({ type: "err", text: "File kosong atau tidak ada data." });
           return;
         }
-        const headerRow = Object.keys(data[0]);
-        setHeaders(headerRow);
+        setHeaders(Object.keys(data[0]));
         setRows(data);
+        guessMapping(Object.keys(data[0]));
       } catch {
         setMsg({ type: "err", text: "Gagal membaca file. Pastikan formatnya .xlsx / .csv." });
       }
@@ -51,68 +94,31 @@ export default function ImportExcel({ onImported }: Props) {
     reader.readAsArrayBuffer(file);
   }
 
-  // Auto-suggest kolom saat header berubah
   function guessMapping(hs: string[]) {
-    const m = { name: "", outlet: "", days: "", start: "", end: "" };
+    const m = { name: "", outlet: "", schedule: "" };
     for (const h of hs) {
       const hh = h.toLowerCase();
       if (!m.name && /(nama|name|dokter|doctor)/.test(hh)) m.name = h;
-      else if (!m.outlet && /(outlet|klinik|puskesmas|fasilitas|faskes|tempat)/.test(hh)) m.outlet = h;
-      else if (!m.days && /(hari|day|praktek|practice|jadwal)/.test(hh)) m.days = h;
-      else if (!m.start && /(mulai|start|jam.*awal|dari)/.test(hh)) m.start = h;
-      else if (!m.end && /(selesai|end|jam.*akhir|sampai)/.test(hh)) m.end = h;
+      else if (!m.outlet && /(outlet|klinik|puskesmas|fasilitas|faskes|tempat|rs\b)/.test(hh)) m.outlet = h;
+      else if (!m.schedule && /(jadwal|hari|schedule|jam|praktek)/.test(hh)) m.schedule = h;
     }
     setMapping(m);
   }
 
-  function onSelectFile() {
-    // re-trigger guess setelah headers set
-  }
-
-  function parseDaysCell(v: unknown): string {
-    const s = String(v ?? "")
-      .toUpperCase()
-      .replace(/[|;]/g, ",");
-    const found = new Set<string>();
-    for (const part of s.split(",")) {
-      const p = part.trim();
-      for (const [code, aliases] of Object.entries(DAY_ALIAS)) {
-        if (aliases.includes(p)) found.add(code);
-      }
-    }
-    return Array.from(found).join(",");
-  }
-
-  function normTime(v: unknown): string | null {
-    const s = String(v ?? "").trim();
-    if (!s) return null;
-    // "09:00", "9:00", "0900", "9", "9AM"...
-    const m = s.match(/^(\d{1,2})(?::?(\d{2}))?\s*(am|pm)?$/i);
-    if (!m) return null;
-    let h = parseInt(m[1], 10);
-    const mm = m[2] ? parseInt(m[2], 10) : 0;
-    if (m[3]) {
-      const pm = m[3].toLowerCase() === "pm";
-      if (pm && h < 12) h += 12;
-      if (!pm && h === 12) h = 0;
-    }
-    return `${String(h).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
-  }
-
   async function handleImport() {
     setMsg(null);
-    if (!mapping.name || !mapping.outlet) {
-      setMsg({ type: "err", text: "Pilih kolom Nama & Outlet dulu." });
+    if (!mapping.name || !mapping.outlet || !mapping.schedule) {
+      setMsg({ type: "err", text: "Pilih kolom Nama, Outlet, dan Jadwal dulu." });
       return;
     }
 
-    const doctors = rows.map((r) => ({
-      name: String(r[mapping.name] ?? "").trim(),
-      outlet: String(r[mapping.outlet] ?? "").trim(),
-      practiceDays: mapping.days ? parseDaysCell(r[mapping.days]) : "",
-      practiceStart: mapping.start ? (normTime(r[mapping.start]) ?? "") : "09:00",
-      practiceEnd: mapping.end ? (normTime(r[mapping.end]) ?? "") : "11:00",
-    }));
+    const doctors = rows.map((r) => {
+      const name = String(r[mapping.name] ?? "").trim();
+      const outlet = String(r[mapping.outlet] ?? "").trim();
+      const scheduleRaw = String(r[mapping.schedule] ?? "");
+      const schedules = parseScheduleText(scheduleRaw);
+      return { name, outlet, schedules };
+    });
 
     setLoading(true);
     const res = await fetch("/api/doctors/bulk", {
@@ -148,10 +154,7 @@ export default function ImportExcel({ onImported }: Props) {
         ref={fileRef}
         type="file"
         accept=".xlsx,.xls,.csv"
-        onChange={(e) => {
-          handleFile(e);
-          onSelectFile();
-        }}
+        onChange={handleFile}
         className="hidden"
         id="excel-file"
       />
@@ -162,22 +165,21 @@ export default function ImportExcel({ onImported }: Props) {
         <Upload size={16} /> Pilih file Excel / CSV
       </label>
 
+      <p className="mt-2 text-[11px] leading-relaxed text-zinc-600">
+        Kolom Jadwal contoh: <code className="text-zinc-500">Senin : 09.00 - 13.00 dan 16.00 - 17.00</code>.
+        &quot;selesai&quot; dianggap +2 jam.
+      </p>
+
       {headers.length > 0 && (
         <div className="mt-3 space-y-2">
-          <button
-            onClick={() => guessMapping(headers)}
-            className="text-xs text-cyan-400 hover:underline"
-          >
+          <button onClick={() => guessMapping(headers)} className="text-xs text-cyan-400 hover:underline">
             ✨ Auto-map kolom
           </button>
-
           {(
             [
               ["name", "Kolom Nama Dokter"],
               ["outlet", "Kolom Outlet"],
-              ["days", "Kolom Hari Praktek"],
-              ["start", "Kolom Jam Mulai"],
-              ["end", "Kolom Jam Selesai"],
+              ["schedule", "Kolom Jadwal"],
             ] as const
           ).map(([key, label]) => (
             <div key={key} className="flex items-center gap-2">
@@ -194,7 +196,6 @@ export default function ImportExcel({ onImported }: Props) {
               </select>
             </div>
           ))}
-
           <div className="flex items-center justify-between pt-1">
             <span className="text-xs text-zinc-500">{rows.length} baris data</span>
             <button

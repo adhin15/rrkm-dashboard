@@ -2,12 +2,15 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Kanban, Table as TableIcon, RefreshCcw } from "lucide-react";
+import { Kanban, Table as TableIcon, RefreshCcw, ListFilter } from "lucide-react";
 import KanbanBoard from "./KanbanBoard";
 import TableView from "./TableView";
 import DoctorForm from "./DoctorForm";
 import ImportExcel from "./ImportExcel";
+import DoctorDetailModal from "./DoctorDetailModal";
 import type { DoctorDTO, DayKey } from "@/lib/types";
+import { DAY_ORDER, DAY_LABEL } from "@/lib/types";
+import { SORT_LABELS, type SortOption } from "@/lib/filters";
 
 interface Props {
   doctors: DoctorDTO[];
@@ -16,7 +19,18 @@ interface Props {
 export default function Board({ doctors }: Props) {
   const [view, setView] = useState<"kanban" | "table">("kanban");
   const [confirmReset, setConfirmReset] = useState(false);
+  const [filterDays, setFilterDays] = useState<DayKey[]>([]);
+  const [filterStart, setFilterStart] = useState("");
+  const [filterEnd, setFilterEnd] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>("position");
+  const [detailCardId, setDetailCardId] = useState<string | null>(null);
   const router = useRouter();
+
+  // Derive popup card dari data terbaru setiap render — jadi setiap refresh,
+  // popup otomatis menampilkan data terbaru tanpa perlu effect / tutup popup.
+  const detailCard = detailCardId
+    ? doctors.find((d) => d.id === detailCardId) ?? null
+    : null;
 
   const refresh = useCallback(() => {
     router.refresh();
@@ -42,10 +56,61 @@ export default function Board({ doctors }: Props) {
     refresh();
   }
 
+  async function handleToggleFlexible(id: string) {
+    const doctor = doctors.find((d) => d.id === id);
+    if (!doctor) return;
+    await fetch("/api/doctors", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, flexible: !doctor.flexible }),
+    });
+    refresh();
+  }
+
+  async function handleToggleVisited(id: string) {
+    const doctor = doctors.find((d) => d.id === id);
+    if (!doctor) return;
+    await fetch("/api/doctors", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, visited: !doctor.visited }),
+    });
+    refresh(); // popup tidak ditutup; useEffect akan refresh datanya
+  }
+
+  async function handleMoveFromModal(id: string, targetDay: DayKey | null) {
+    // Pindah hari dari popup — popup tetap terbuka, data di-refresh via useEffect.
+    // Validasi hari praktek dilakukan di KanbanBoard.handleDragEnd; di sini
+    // panggil handleMove langsung. Hari yang tidak praktek sudah dinonaktifkan
+    // di UI popup, jadi tidak perlu blok tambahan.
+    await handleMove(id, targetDay);
+  }
+
+  async function handleDeleteFromModal(id: string) {
+    if (!confirm(`Hapus dokter ini?`)) return;
+    await fetch(`/api/doctors?id=${id}`, { method: "DELETE" });
+    setDetailCardId(null);
+    refresh();
+  }
+
   async function handleReset() {
     await fetch("/api/doctors", { method: "PUT" });
     setConfirmReset(false);
     refresh();
+  }
+
+  function toggleDay(d: DayKey) {
+    setFilterDays((prev) =>
+      prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d]
+    );
+  }
+
+  const hasFilter = filterDays.length > 0 || !!filterStart || !!filterEnd;
+
+  function clearFilters() {
+    setFilterDays([]);
+    setFilterStart("");
+    setFilterEnd("");
   }
 
   return (
@@ -103,11 +168,90 @@ export default function Board({ doctors }: Props) {
         </div>
       </div>
 
+      {/* Toolbar Filter & Sort */}
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
+        <div className="flex items-center gap-1.5">
+          <ListFilter size={15} className="text-cyan-400" />
+          <span className="text-xs font-medium text-zinc-300">Filter</span>
+        </div>
+
+        {/* Filter hari */}
+        <div className="flex flex-wrap items-center gap-1">
+          <span className="mr-1 text-[11px] text-zinc-500">Hari:</span>
+          {DAY_ORDER.map((d) => (
+            <button
+              key={d}
+              onClick={() => toggleDay(d)}
+              className={`rounded-md border px-2 py-1 text-xs transition-colors ${
+                filterDays.includes(d)
+                  ? "border-cyan-400 bg-cyan-500/20 text-cyan-300"
+                  : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-500"
+              }`}
+            >
+              {DAY_LABEL[d].short}
+            </button>
+          ))}
+        </div>
+
+        {/* Filter range jam */}
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] text-zinc-500">Jam:</span>
+          <input
+            type="time"
+            value={filterStart}
+            onChange={(e) => setFilterStart(e.target.value)}
+            className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-1 text-xs text-zinc-100 outline-none focus:border-cyan-400"
+          />
+          <span className="text-zinc-500">–</span>
+          <input
+            type="time"
+            value={filterEnd}
+            onChange={(e) => setFilterEnd(e.target.value)}
+            className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-1 text-xs text-zinc-100 outline-none focus:border-cyan-400"
+          />
+        </div>
+
+        {hasFilter && (
+          <button
+            onClick={clearFilters}
+            className="rounded-md border border-zinc-600 px-2 py-1 text-xs text-zinc-300 hover:border-red-400 hover:text-red-300"
+          >
+            Bersihkan
+          </button>
+        )}
+
+        {/* Sorting */}
+        <div className="ml-auto flex items-center gap-1.5">
+          <span className="text-[11px] text-zinc-500">Urutkan:</span>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as SortOption)}
+            className="rounded border border-zinc-700 bg-zinc-800 px-2 py-1 text-xs text-zinc-100 outline-none focus:border-cyan-400"
+          >
+            {(Object.keys(SORT_LABELS) as SortOption[]).map((opt) => (
+              <option key={opt} value={opt}>{SORT_LABELS[opt]}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       {/* View */}
       {view === "kanban" ? (
-        <KanbanBoard doctors={doctors} onMove={handleMove} onDelete={handleDelete} />
+        <KanbanBoard doctors={doctors} onMove={handleMove} onDelete={handleDelete} onToggleFlexible={handleToggleFlexible} onOpenDetail={(c) => setDetailCardId(c.id)} filterDays={filterDays} filterStart={filterStart} filterEnd={filterEnd} sortBy={sortBy} />
       ) : (
         <TableView doctors={doctors} />
+      )}
+
+      {/* Popup detail */}
+      {detailCard && (
+        <DoctorDetailModal
+          card={detailCard}
+          onClose={() => setDetailCardId(null)}
+          onMove={handleMoveFromModal}
+          onToggleFlexible={handleToggleFlexible}
+          onToggleVisited={handleToggleVisited}
+          onDelete={handleDeleteFromModal}
+        />
       )}
     </div>
   );
