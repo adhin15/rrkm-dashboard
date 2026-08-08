@@ -39,6 +39,7 @@ function toDTO(d: DoctorWithSchedules) {
     position: d.position,
     flexible: d.flexible,
     visited: d.visited,
+    priority: d.priority,
   };
 }
 
@@ -54,7 +55,7 @@ export async function GET() {
 // ===== POST /api/doctors — tambah dokter (manual) =====
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { name, outlet, schedules, scheduledDay, flexible } = body;
+  const { name, outlet, schedules, scheduledDay, flexible, priority } = body;
 
   if (!name || !outlet || !schedules?.length) {
     return NextResponse.json(
@@ -82,6 +83,7 @@ export async function POST(request: NextRequest) {
       scheduledDay: scheduledDay ?? null,
       position: (maxPos._max.position ?? 0) + 1,
       flexible: flexible === true,
+      priority: priority === true,
       schedules: { create: valid },
     },
     include: { schedules: true },
@@ -93,7 +95,7 @@ export async function POST(request: NextRequest) {
 // ===== PATCH /api/doctors — update (pindah kolom / edit profil) =====
 export async function PATCH(request: NextRequest) {
   const body = await request.json();
-  const { id, name, outlet, schedules, scheduledDay, position, flexible, visited } = body;
+  const { id, name, outlet, schedules, scheduledDay, position, flexible, visited, priority } = body;
 
   if (!id) {
     return NextResponse.json({ error: "id wajib diisi" }, { status: 400 });
@@ -106,6 +108,7 @@ export async function PATCH(request: NextRequest) {
   if (scheduledDay !== undefined) data.scheduledDay = scheduledDay; // null -> Pool
   if (flexible !== undefined) data.flexible = flexible === true;
   if (visited !== undefined) data.visited = visited === true;
+  if (priority !== undefined) data.priority = priority === true;
 
   // Jika ada schedules baru, replace seluruh jadwal (transaction)
   if (schedules !== undefined) {

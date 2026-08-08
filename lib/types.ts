@@ -49,6 +49,7 @@ export interface DoctorDTO {
   position: number;
   flexible: boolean; // true = jam tidak pasti, tidak ikut deteksi tabrakan
   visited: boolean; // true = sudah dikunjungi/done
+  priority: boolean; // true = wajib dikunjungi (nama biru neon + glow)
 }
 
 // Helper: jadwal dokter untuk hari tertentu (bisa kosong / multi-sesi)

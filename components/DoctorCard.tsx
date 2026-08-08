@@ -61,7 +61,15 @@ export default function DoctorCard({ card, issue, onDelete, onToggleFlexible, on
         </span>
       )}
       <div className="flex items-start justify-between gap-2">
-        <p className="text-sm font-medium text-zinc-100">{card.name}</p>
+        <p
+          className={`text-sm font-medium ${
+            card.priority
+              ? "text-sky-400 drop-shadow-[0_0_6px_rgba(56,189,248,0.9)]"
+              : "text-zinc-100"
+          }`}
+        >
+          {card.name}
+        </p>
         <div className="flex shrink-0 items-center gap-0.5">
           <button
             onClick={(e) => {

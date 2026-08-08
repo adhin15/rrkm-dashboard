@@ -29,6 +29,7 @@ export default async function Home() {
     position: d.position,
     flexible: d.flexible,
     visited: d.visited,
+    priority: d.priority,
   }));
 
   return (

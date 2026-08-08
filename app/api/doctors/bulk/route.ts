@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
     const outlet = (row.outlet ?? "").toString().trim();
     const schedules = normalizeSchedules(row.schedules);
     const flexible = row.flexible === true;
+    const priority = row.priority === true;
 
     if (!name || !outlet || schedules.length === 0) {
       skipped.push(name || "(tanpa nama)");
@@ -59,6 +60,7 @@ export async function POST(request: NextRequest) {
         scheduledDay: null,
         position: nextPos++,
         flexible,
+        priority,
         schedules: { create: schedules },
       },
     });

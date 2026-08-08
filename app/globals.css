@@ -24,3 +24,33 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Semua elemen interaktif → cursor pointer.
+   Catatan: elemen drag (cursor-grab) tetap di-pertahankan karena bukan klik. */
+button:not(:disabled),
+[role="button"]:not(:disabled),
+select:not(:disabled),
+label[for],
+summary,
+input[type="checkbox"],
+input[type="radio"],
+input[type="color"],
+input[type="range"],
+a,
+details > summary {
+  cursor: pointer;
+}
+
+button:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
+/* Elemen drag (card kanban) harus tetap grab/grabbing — jangan
+   di-override jadi pointer oleh rule `[role="button"]` di atas. */
+.cursor-grab {
+  cursor: grab !important;
+}
+.cursor-grabbing {
+  cursor: grabbing !important;
+}

@@ -26,6 +26,8 @@ model Doctor {
   // Sudah dikunjungi/done. Tetap ikut hitungan tabrakan, tapi card-nya
   // tidak menampilkan indikator warna collision.
   visited      Boolean    @default(false)
+  // Dokter prioritas (wajib dikunjungi). Ditandai nama biru neon + glow.
+  priority     Boolean    @default(false)
   createdAt    DateTime   @default(now())
   // Jadwal praktek dokter (bisa beda jam per hari, bisa multi-sesi per hari)
   schedules    Schedule[]

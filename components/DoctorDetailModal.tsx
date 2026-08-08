@@ -1,6 +1,6 @@
 "use client";
 
-import { X, CheckCircle2, Circle, Clock, Trash2 } from "lucide-react";
+import { X, CheckCircle2, Circle, Clock, Star, Trash2 } from "lucide-react";
 import type { DoctorDTO, DayKey } from "@/lib/types";
 import { DAY_ORDER, DAY_LABEL } from "@/lib/types";
 
@@ -10,6 +10,7 @@ interface Props {
   onMove: (id: string, day: DayKey | null) => void;
   onToggleFlexible: (id: string) => void;
   onToggleVisited: (id: string) => void;
+  onTogglePriority: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
@@ -19,6 +20,7 @@ export default function DoctorDetailModal({
   onMove,
   onToggleFlexible,
   onToggleVisited,
+  onTogglePriority,
   onDelete,
 }: Props) {
   const currentDay = card.scheduledDay;
@@ -124,6 +126,17 @@ export default function DoctorDetailModal({
 
           {/* Status toggles */}
           <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => onTogglePriority(card.id)}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                card.priority
+                  ? "border-sky-400 bg-sky-500/20 text-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.4)]"
+                  : "border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-sky-400"
+              }`}
+            >
+              <Star size={16} fill={card.priority ? "currentColor" : "none"} />
+              {card.priority ? "Prioritas" : "Tandai prioritas"}
+            </button>
             <button
               onClick={() => onToggleVisited(card.id)}
               className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${

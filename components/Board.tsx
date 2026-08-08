@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Kanban, Table as TableIcon, RefreshCcw, ListFilter } from "lucide-react";
+import { Kanban, Table as TableIcon, RefreshCcw, ListFilter, Wand2 } from "lucide-react";
 import KanbanBoard from "./KanbanBoard";
 import TableView from "./TableView";
 import DoctorForm from "./DoctorForm";
@@ -11,6 +11,7 @@ import DoctorDetailModal from "./DoctorDetailModal";
 import type { DoctorDTO, DayKey } from "@/lib/types";
 import { DAY_ORDER, DAY_LABEL } from "@/lib/types";
 import { SORT_LABELS, type SortOption } from "@/lib/filters";
+import { autoAssign } from "@/lib/autoschedule";
 
 interface Props {
   doctors: DoctorDTO[];
@@ -24,6 +25,8 @@ export default function Board({ doctors }: Props) {
   const [filterEnd, setFilterEnd] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("position");
   const [detailCardId, setDetailCardId] = useState<string | null>(null);
+  const [confirmAssign, setConfirmAssign] = useState(false);
+  const [assignMsg, setAssignMsg] = useState<string | null>(null);
   const router = useRouter();
 
   // Derive popup card dari data terbaru setiap render — jadi setiap refresh,
@@ -75,7 +78,18 @@ export default function Board({ doctors }: Props) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, visited: !doctor.visited }),
     });
-    refresh(); // popup tidak ditutup; useEffect akan refresh datanya
+    refresh(); // popup tidak ditutup; data terbaru auto-render
+  }
+
+  async function handleTogglePriority(id: string) {
+    const doctor = doctors.find((d) => d.id === id);
+    if (!doctor) return;
+    await fetch("/api/doctors", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, priority: !doctor.priority }),
+    });
+    refresh();
   }
 
   async function handleMoveFromModal(id: string, targetDay: DayKey | null) {
@@ -97,6 +111,39 @@ export default function Board({ doctors }: Props) {
     await fetch("/api/doctors", { method: "PUT" });
     setConfirmReset(false);
     refresh();
+  }
+
+  async function handleAutoAssign() {
+    setAssignMsg(null);
+    setConfirmAssign(false);
+    try {
+      // Hanya assign dokter yang masih di Pool
+      const poolDoctors = doctors.filter((d) => d.scheduledDay === null);
+      if (poolDoctors.length === 0) {
+        setAssignMsg("Tidak ada dokter di Pool untuk di-assign.");
+        setTimeout(() => setAssignMsg(null), 3500);
+        return;
+      }
+      const result = autoAssign(doctors);
+      const assignedCount = Object.keys(result).length;
+      const skipped = poolDoctors.length - assignedCount;
+
+      const res = await fetch("/api/doctors/assign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assignments: result }),
+      });
+      if (!res.ok) throw new Error("Gagal menyimpan jadwal");
+
+      refresh();
+      setAssignMsg(
+        `✅ Auto-assign selesai: ${assignedCount} dokter dijadwalkan${skipped ? `, ${skipped} di-skip (tidak muat)` : ""}.`
+      );
+      setTimeout(() => setAssignMsg(null), 5000);
+    } catch (e) {
+      setAssignMsg(`❌ Gagal auto-assign: ${(e as Error).message}`);
+      setTimeout(() => setAssignMsg(null), 5000);
+    }
   }
 
   function toggleDay(d: DayKey) {
@@ -144,6 +191,26 @@ export default function Board({ doctors }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Auto Assign */}
+          {confirmAssign ? (
+            <div className="flex items-center gap-2 rounded-lg border border-cyan-500 bg-cyan-950/50 px-3 py-1.5">
+              <span className="text-xs text-cyan-200">Auto-assign semua dokter di Pool?</span>
+              <button onClick={handleAutoAssign} className="text-xs font-semibold text-cyan-300 hover:text-cyan-100">
+                Ya, assign
+              </button>
+              <button onClick={() => setConfirmAssign(false)} className="text-xs text-cyan-400/70 hover:text-cyan-200">
+                Batal
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmAssign(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-700 bg-cyan-500/10 px-3 py-2 text-sm font-medium text-cyan-300 transition-colors hover:border-cyan-400 hover:bg-cyan-500/20"
+              title="Susun jadwal otomatis: klaster outlet, dahulukan prioritas"
+            >
+              <Wand2 size={15} /> Auto Assign
+            </button>
+          )}
           {/* Reset minggu */}
           {confirmReset ? (
             <div className="flex items-center gap-2 rounded-lg border border-amber-500 bg-amber-950/50 px-3 py-1.5">
@@ -167,6 +234,13 @@ export default function Board({ doctors }: Props) {
           <DoctorForm onAdded={refresh} />
         </div>
       </div>
+
+      {/* Pesan auto-assign */}
+      {assignMsg && (
+        <div className="mb-3 rounded-lg border border-cyan-700 bg-cyan-950/50 px-4 py-2 text-sm text-cyan-100">
+          {assignMsg}
+        </div>
+      )}
 
       {/* Toolbar Filter & Sort */}
       <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
@@ -250,6 +324,7 @@ export default function Board({ doctors }: Props) {
           onMove={handleMoveFromModal}
           onToggleFlexible={handleToggleFlexible}
           onToggleVisited={handleToggleVisited}
+          onTogglePriority={handleTogglePriority}
           onDelete={handleDeleteFromModal}
         />
       )}
