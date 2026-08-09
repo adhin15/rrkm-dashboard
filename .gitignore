@@ -37,6 +37,10 @@ yarn-error.log*
 /prisma/dev.db
 /prisma/dev.db-journal
 
+# docker runtime data & logs (jangan di-commit)
+/data/
+/logs/
+
 # vercel
 .vercel
 

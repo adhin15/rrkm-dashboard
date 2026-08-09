@@ -1,0 +1,21 @@
+services:
+  rrkm-webhook:
+    image: rrkm-webhook:latest
+    container_name: rrkm-webhook
+    restart: unless-stopped
+    ports:
+      - "9003:9003"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /home/odysseus/.ssh:/home/odysseus/.ssh:ro
+      - /home/odysseus/projects/web-app/rrkm-dashboard:/home/odysseus/projects/web-app/rrkm-dashboard
+      - /home/odysseus/projects/web-app/rrkm-dashboard/logs:/app/logs
+      - /home/odysseus/projects/web-app/rrkm-dashboard/deploy.sh:/app/rrkm-deploy.sh:ro
+    networks:
+      - proxy
+    env_file:
+      - .env.webhook
+
+networks:
+  proxy:
+    external: true

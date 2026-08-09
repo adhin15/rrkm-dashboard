@@ -1,0 +1,43 @@
+FROM python:3.11-slim
+
+# Install Node.js v22, Docker CLI, git, SSH
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    gnupg \
+    git \
+    openssh-client \
+    lsb-release \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js v22
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Docker CLI (to communicate with host Docker daemon via socket mount)
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list \
+    && apt-get update \
+    && apt-get install -y docker-ce-cli docker-compose-plugin \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy webhook receiver and deploy script
+COPY webhook.py ./
+COPY deploy.sh ./rrkm-deploy.sh
+
+# Create logs directory
+RUN mkdir -p /app/logs
+
+# Make scripts executable
+RUN chmod +x webhook.py rrkm-deploy.sh
+
+# Environment
+ENV WEBHOOK_SECRET=""
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 9003
+
+CMD ["python3", "webhook.py"]
