@@ -27,6 +27,82 @@ function parseDay(s: string): DayKey | null {
   return null;
 }
 
+/**
+ * Deteksi & normalisasi sheet Excel jadi format flat:
+ * header (Nama | Outlet | Jadwal) + 1 baris per dokter, dengan jadwal semua
+ * hari digabung dalam 1 sel (dipisah " | ").
+ *
+ * Mendukung:
+ *  - Header di baris mana pun (tidak harus row 1)
+ *  - Header typo seperti "Oulet" (tanpa 's')
+ *  - 1 dokter yang membentang beberapa baris (nama/outlet di baris pertama,
+ *    tiap baris berisi 1 hari jadwal) — nama di-forward-fill & jadwal digabung
+ *  - Format standar (header row 1, semua hari dalam 1 sel)
+ */
+function normalizeSheet(sheet: XLSX.WorkSheet): {
+  headers: string[];
+  rows: Record<string, unknown>[];
+} | null {
+  const raw = XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, defval: "" });
+  if (!raw.length) return null;
+
+  const isName = (v: unknown) => /nama|name|dokter|doctor/i.test(String(v));
+  const isOutlet = (v: unknown) => /(oule?t|klinik|puskesmas|fasilitas|faskes|tempat|\brs\b)/i.test(String(v));
+  const isSchedule = (v: unknown) => /(jadwal|hari|schedule|jam|praktek)/i.test(String(v));
+
+  // Cari baris header (scan sampai 15 baris pertama)
+  let headerRow = -1,
+    nameIdx = -1,
+    outletIdx = -1,
+    schedIdx = -1;
+  for (let r = 0; r < Math.min(raw.length, 15); r++) {
+    const row = raw[r];
+    let n = -1,
+      o = -1,
+      s = -1;
+    for (let c = 0; c < row.length; c++) {
+      const v = row[c];
+      if (isName(v) && n === -1) n = c;
+      else if (isOutlet(v) && o === -1) o = c;
+      else if (isSchedule(v) && s === -1) s = c;
+    }
+    if (n !== -1 && s !== -1) {
+      headerRow = r;
+      nameIdx = n;
+      outletIdx = o;
+      schedIdx = s;
+      break;
+    }
+  }
+  if (headerRow === -1) return null;
+
+  // Forward-fill nama/outlet + gabung jadwal per dokter
+  const doctors: { name: string; outlet: string; scheds: string[] }[] = [];
+  let cur: { name: string; outlet: string; scheds: string[] } | null = null;
+  for (let r = headerRow + 1; r < raw.length; r++) {
+    const row = raw[r];
+    const name = String(row[nameIdx] ?? "").trim();
+    const outlet = outletIdx >= 0 ? String(row[outletIdx] ?? "").trim() : "";
+    const sched = String(row[schedIdx] ?? "").trim();
+
+    if (name) {
+      cur = { name, outlet, scheds: sched ? [sched] : [] };
+      doctors.push(cur);
+    } else if (cur) {
+      if (outlet && !cur.outlet) cur.outlet = outlet;
+      if (sched) cur.scheds.push(sched);
+    }
+  }
+
+  const headers = ["Nama", "Outlet", "Jadwal"];
+  const rows = doctors.map((d) => ({
+    Nama: d.name,
+    Outlet: d.outlet,
+    Jadwal: d.scheds.join(" | "),
+  }));
+  return { headers, rows };
+}
+
 function parseTime(s: string): string | null {
   const m = s.trim().match(/^(\d{1,2})[.:](\d{2})$/);
   if (m) return `${Number(m[1]).toString().padStart(2, "0")}:${m[2]}`;
@@ -78,15 +154,29 @@ export default function ImportExcel({ onImported }: Props) {
     reader.onload = (ev) => {
       try {
         const wb = XLSX.read(ev.target?.result, { type: "array" });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: "" });
-        if (data.length === 0) {
-          setMsg({ type: "err", text: "File kosong atau tidak ada data." });
+
+        // Pilih sheet terbaik: coba semua, ambil yang menghasilkan dokter terbanyak
+        // & outlet lengkap (hindari sheet RRKM/jadwal yang bukan master dokter)
+        let best: { headers: string[]; rows: Record<string, unknown>[] } | null = null;
+        let bestScore = -1;
+        for (const name of wb.SheetNames) {
+          const n = normalizeSheet(wb.Sheets[name]);
+          if (!n || n.rows.length === 0) continue;
+          const withOutlet = n.rows.filter((r) => String(r.Outlet ?? "").trim()).length;
+          const score = n.rows.length + withOutlet; // preferensi: banyak baris + outlet lengkap
+          if (score > bestScore) {
+            bestScore = score;
+            best = n;
+          }
+        }
+
+        if (!best) {
+          setMsg({ type: "err", text: "Tidak menemukan kolom Nama & Jadwal. Pastikan file valid." });
           return;
         }
-        setHeaders(Object.keys(data[0]));
-        setRows(data);
-        guessMapping(Object.keys(data[0]));
+        setHeaders(best.headers);
+        setRows(best.rows);
+        setMapping({ name: "Nama", outlet: "Outlet", schedule: "Jadwal" });
       } catch {
         setMsg({ type: "err", text: "Gagal membaca file. Pastikan formatnya .xlsx / .csv." });
       }
