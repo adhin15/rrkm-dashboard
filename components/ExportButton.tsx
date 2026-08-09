@@ -56,7 +56,7 @@ export default function ExportButton({ doctors }: Props) {
   return (
     <button
       onClick={handleExport}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-300 transition-colors hover:border-emerald-400 hover:text-emerald-300"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-line-strong bg-elevated px-3 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-emerald-400 hover:text-emerald-300"
       title="Export semua data dokter ke Excel"
     >
       <Download size={15} /> Export

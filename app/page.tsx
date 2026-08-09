@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Board from "@/components/Board";
 import LogoutButton from "@/components/LogoutButton";
+import ThemeToggle from "@/components/ThemeToggle";
 import type { DayKey } from "@/lib/types";
 import { validateSession } from "@/lib/auth";
 
@@ -44,18 +45,21 @@ export default async function Home() {
   }));
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
+    <main className="min-h-screen bg-surface text-ink">
       <div className="mx-auto max-w-[1400px] px-4 py-6">
         <header className="mb-6 flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
               RRKM <span className="text-cyan-400">Dashboard</span>
             </h1>
-            <p className="mt-1 text-sm text-zinc-400">
+            <p className="mt-1 text-sm text-ink-muted">
               Jadwal kunjungan mingguan dokter — drag & drop, validasi otomatis
             </p>
           </div>
-          <LogoutButton />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <LogoutButton />
+          </div>
         </header>
 
         <Board doctors={doctors} />

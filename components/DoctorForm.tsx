@@ -120,21 +120,21 @@ export default function DoctorForm({ onAdded }: Props) {
       {!open ? (
         <button
           onClick={() => setOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-200 transition-colors hover:border-cyan-400 hover:text-cyan-300"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-line-strong bg-elevated px-3 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-cyan-400 hover:text-cyan-300"
         >
           <Plus size={16} /> Tambah Dokter
         </button>
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="w-[520px] max-w-full rounded-xl border border-zinc-700 bg-zinc-900 p-4 shadow-lg"
+          className="w-[520px] max-w-full rounded-xl border border-line-strong bg-card p-4 shadow-lg"
         >
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-zinc-100">Tambah Dokter</h3>
+            <h3 className="text-sm font-semibold text-ink">Tambah Dokter</h3>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded p-1 text-zinc-500 hover:text-zinc-300"
+              className="rounded p-1 text-ink-faint hover:text-ink-2"
               aria-label="Tutup"
             >
               <X size={16} />
@@ -143,32 +143,32 @@ export default function DoctorForm({ onAdded }: Props) {
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs text-zinc-400">Nama Dokter</label>
+              <label className="mb-1 block text-xs text-ink-muted">Nama Dokter</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-cyan-400"
+                className="w-full rounded-lg border border-line-strong bg-elevated px-3 py-2 text-sm text-ink outline-none focus:border-cyan-400"
                 placeholder="dr. Andi"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-zinc-400">Outlet / Klinik</label>
+              <label className="mb-1 block text-xs text-ink-muted">Outlet / Klinik</label>
               <input
                 value={outlet}
                 onChange={(e) => setOutlet(e.target.value)}
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 outline-none focus:border-cyan-400"
+                className="w-full rounded-lg border border-line-strong bg-elevated px-3 py-2 text-sm text-ink outline-none focus:border-cyan-400"
                 placeholder="Puskesmas Sukamaju"
               />
             </div>
           </div>
 
           <div className="mt-3">
-            <label className="mb-1 block text-xs text-zinc-400">Hari & Jam Praktek</label>
-            <div className="max-h-56 space-y-2 overflow-y-auto rounded-lg border border-zinc-800 p-2">
+            <label className="mb-1 block text-xs text-ink-muted">Hari & Jam Praktek</label>
+            <div className="max-h-56 space-y-2 overflow-y-auto rounded-lg border border-line p-2">
               {DAY_ORDER.map((d) => {
                 const active = sessions[d];
                 return (
-                  <div key={d} className="rounded-lg bg-zinc-800/40 p-2">
+                  <div key={d} className="rounded-lg bg-elevated/40 p-2">
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
@@ -176,7 +176,7 @@ export default function DoctorForm({ onAdded }: Props) {
                         className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
                           active
                             ? "border-cyan-400 bg-cyan-500/20 text-cyan-300"
-                            : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-500"
+                            : "border-line-strong bg-elevated text-ink-muted hover:border-line-strong"
                         }`}
                       >
                         {DAY_LABEL[d].long}
@@ -185,7 +185,7 @@ export default function DoctorForm({ onAdded }: Props) {
                         <button
                           type="button"
                           onClick={() => addSession(d)}
-                          className="ml-auto rounded border border-zinc-600 px-1.5 py-0.5 text-[10px] text-zinc-300 hover:border-cyan-400 hover:text-cyan-300"
+                          className="ml-auto rounded border border-line-strong px-1.5 py-0.5 text-[10px] text-ink-2 hover:border-cyan-400 hover:text-cyan-300"
                         >
                           + sesi
                         </button>
@@ -198,19 +198,19 @@ export default function DoctorForm({ onAdded }: Props) {
                             type="time"
                             value={ses[0]}
                             onChange={(e) => setSession(d, idx, 0, e.target.value)}
-                            className="rounded border border-zinc-700 bg-zinc-900 px-1.5 py-1 text-xs text-zinc-100 outline-none focus:border-cyan-400"
+                            className="rounded border border-line-strong bg-card px-1.5 py-1 text-xs text-ink outline-none focus:border-cyan-400"
                           />
-                          <span className="text-zinc-500">–</span>
+                          <span className="text-ink-faint">–</span>
                           <input
                             type="time"
                             value={ses[1]}
                             onChange={(e) => setSession(d, idx, 1, e.target.value)}
-                            className="rounded border border-zinc-700 bg-zinc-900 px-1.5 py-1 text-xs text-zinc-100 outline-none focus:border-cyan-400"
+                            className="rounded border border-line-strong bg-card px-1.5 py-1 text-xs text-ink outline-none focus:border-cyan-400"
                           />
                           <button
                             type="button"
                             onClick={() => removeSession(d, idx)}
-                            className="ml-auto rounded p-0.5 text-zinc-600 hover:text-red-400"
+                            className="ml-auto rounded p-0.5 text-ink-faintest hover:text-red-400"
                             aria-label="Hapus sesi"
                           >
                             <X size={13} />
@@ -233,14 +233,14 @@ export default function DoctorForm({ onAdded }: Props) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="rounded-lg px-4 py-2 text-sm text-zinc-400 hover:text-zinc-200"
+              className="rounded-lg px-4 py-2 text-sm text-ink-muted hover:text-ink-2"
             >
               Batal
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-medium text-zinc-950 transition-colors hover:bg-cyan-400 disabled:opacity-50"
+              className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-cyan-400 disabled:opacity-50"
             >
               {loading ? "Menyimpan..." : "Simpan"}
             </button>

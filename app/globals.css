@@ -1,27 +1,63 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Semantic color tokens
+   Dark = default (di :root). Light = override di .light (di <html>).
+   Komponen pakai token (bg-surface, text-ink, border-line, dst),
+   bukan warna literal — jadi ganti tema cukup edit variable di sini.
+   ============================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Dark (default) */
+  --surface: #09090b;          /* zinc-950  — latar halaman */
+  --card: #18181b;            /* zinc-900  — panel / kartu */
+  --elevated: #27272a;        /* zinc-800  — input / tombol */
+  --elevated-strong: #3f3f46; /* zinc-700  — hover / badge */
+  --line: #27272a;            /* zinc-800  — border halus */
+  --line-strong: #3f3f46;     /* zinc-700  — border tegas */
+  --ink: #f4f4f5;             /* zinc-100  — teks utama */
+  --ink-2: #d4d4d8;           /* zinc-300  — teks sekunder */
+  --ink-muted: #a1a1aa;       /* zinc-400  — teks redup */
+  --ink-faint: #71717a;       /* zinc-500  — teks samar */
+  --ink-faintest: #52525b;    /* zinc-600  — teks paling samar */
+  --on-accent: #09090b;       /* zinc-950  — teks di atas warna aksen */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.light {
+  --surface: #ffffff;
+  --card: #f4f4f5;            /* zinc-100 */
+  --elevated: #e4e4e7;        /* zinc-200 */
+  --elevated-strong: #d4d4d8; /* zinc-300 */
+  --line: #e4e4e7;            /* zinc-200 */
+  --line-strong: #d4d4d8;     /* zinc-300 */
+  --ink: #18181b;             /* zinc-900 */
+  --ink-2: #3f3f46;           /* zinc-700 */
+  --ink-muted: #71717a;       /* zinc-500 */
+  --ink-faint: #71717a;       /* zinc-500 */
+  --ink-faintest: #a1a1aa;    /* zinc-400 */
+  --on-accent: #ffffff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Ekspos token ke Tailwind v4 → bg-surface, text-ink, border-line, dst.
+   (tanpa `inline` agar utility mereferensikan var saat runtime, sehingga
+   toggle .light langsung mengubah warna tanpa rebuild) */
+@theme {
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-elevated: var(--elevated);
+  --color-elevated-strong: var(--elevated-strong);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-ink-faintest: var(--ink-faintest);
+  --color-on-accent: var(--on-accent);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--surface);
+  color: var(--ink);
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -53,4 +89,14 @@ select:disabled {
 }
 .cursor-grabbing {
   cursor: grabbing !important;
+}
+
+/* Sembunyikan scrollbar tetapi scroll tetap berfungsi.
+   Dipakai di container yang bisa discroll (kolom kanban, baris board). */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }

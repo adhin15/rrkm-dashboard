@@ -36,16 +36,16 @@ export default function KanbanColumn({ day, cards, isPool, onDelete, onToggleFle
   return (
     <div
       ref={setNodeRef}
-      className={`flex w-[50vw] shrink-0 snap-start flex-col rounded-xl border bg-zinc-900/50 sm:w-auto sm:min-w-[240px] sm:flex-1 ${
-        isOver ? "border-cyan-400 ring-2 ring-cyan-400/30" : "border-zinc-800"
+      className={`flex max-h-[75vh] w-[50vw] shrink-0 snap-start flex-col rounded-xl border bg-card/50 sm:w-auto sm:min-w-[240px] sm:flex-1 ${
+        isOver ? "border-cyan-400 ring-2 ring-cyan-400/30" : "border-line"
       }`}
     >
       {/* Header kolom */}
-      <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-2.5">
+      <div className="flex items-center justify-between border-b border-line px-3 py-2.5">
         <div>
-          <h3 className="text-sm font-semibold text-zinc-100">{label.short}</h3>
+          <h3 className="text-sm font-semibold text-ink">{label.short}</h3>
           {!isPool && (
-            <p className="text-[10px] text-zinc-500">
+            <p className="text-[10px] text-ink-faint">
               {day === "SABTU" ? `Half-day s/d ${SATURDAY_END}` : "Full day"}
             </p>
           )}
@@ -63,7 +63,7 @@ export default function KanbanColumn({ day, cards, isPool, onDelete, onToggleFle
           </span>
         )}
         {isPool && (
-          <span className="rounded-full bg-zinc-700/50 px-2 py-0.5 text-[11px] font-semibold text-zinc-300">
+          <span className="rounded-full bg-elevated-strong/50 px-2 py-0.5 text-[11px] font-semibold text-ink-2">
             {count}
           </span>
         )}
@@ -71,9 +71,9 @@ export default function KanbanColumn({ day, cards, isPool, onDelete, onToggleFle
 
       {/* List card */}
       <SortableContext items={cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-        <div className="flex flex-1 flex-col gap-2 p-2">
+        <div className="scrollbar-hide flex flex-1 flex-col gap-2 overflow-y-auto p-2">
           {cards.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-zinc-800 p-4 text-center text-xs text-zinc-600">
+            <div className="rounded-lg border border-dashed border-line p-4 text-center text-xs text-ink-faintest">
               {isPool ? "Drag card ke sini / tambah" : "Kosong"}
             </div>
           ) : (

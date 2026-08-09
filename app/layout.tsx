@@ -22,8 +22,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-zinc-950">{children}</body>
+      <head>
+        {/* Anti-FOUC: terapkan tema tersimpan sebelum paint (client-only).
+            Default dark = tanpa class .light. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("rrkm-theme");if(t==="light"){document.documentElement.classList.add("light");}}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col bg-surface">{children}</body>
     </html>
   );
 }

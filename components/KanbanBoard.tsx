@@ -201,7 +201,7 @@ export default function KanbanBoard({
           onDragCancel={handleDragCancel}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex items-start gap-3 overflow-x-auto pb-4 sm:snap-none">
+          <div className="scrollbar-hide flex items-stretch gap-3 overflow-x-auto pb-4 sm:snap-none">
             {/* Kolom Pool dulu */}
             <KanbanColumn day="POOL" cards={sortedGroups.POOL} isPool onDelete={onDelete} onToggleFlexible={onToggleFlexible} onOpenDetail={onOpenDetail} />
 

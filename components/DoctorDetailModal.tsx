@@ -31,18 +31,18 @@ export default function DoctorDetailModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg overflow-hidden rounded-2xl border border-zinc-700 bg-zinc-900 shadow-2xl"
+        className="w-full max-w-lg overflow-hidden rounded-2xl border border-line-strong bg-card shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-zinc-800 bg-zinc-900 px-5 py-4">
+        <div className="flex items-start justify-between border-b border-line bg-card px-5 py-4">
           <div>
-            <h2 className="text-lg font-semibold text-zinc-100">{card.name}</h2>
-            <p className="text-sm text-zinc-400">{card.outlet}</p>
+            <h2 className="text-lg font-semibold text-ink">{card.name}</h2>
+            <p className="text-sm text-ink-muted">{card.outlet}</p>
           </div>
           <button
             onClick={onClose}
-            className="rounded p-1 text-zinc-500 hover:text-zinc-200"
+            className="rounded p-1 text-ink-faint hover:text-ink-2"
             aria-label="Tutup"
           >
             <X size={18} />
@@ -53,7 +53,7 @@ export default function DoctorDetailModal({
         <div className="max-h-[60vh] space-y-5 overflow-y-auto px-5 py-4">
           {/* Jadwal per hari */}
           <div>
-            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
               Jadwal Praktek
             </h3>
             <div className="space-y-1.5">
@@ -65,7 +65,7 @@ export default function DoctorDetailModal({
                     <span className="w-16 shrink-0 font-medium text-cyan-300">
                       {DAY_LABEL[d].long}
                     </span>
-                    <span className="text-zinc-200">
+                    <span className="text-ink-2">
                       {scheds.map((s) => `${s.startTime}–${s.endTime}`).join(", ")}
                     </span>
                   </div>
@@ -84,7 +84,7 @@ export default function DoctorDetailModal({
 
           {/* Pindahkan ke hari */}
           <div>
-            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
               Pindahkan ke Hari
             </h3>
             <div className="flex flex-wrap gap-1.5">
@@ -93,7 +93,7 @@ export default function DoctorDetailModal({
                 className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
                   currentDay === null
                     ? "border-cyan-400 bg-cyan-500/20 text-cyan-300"
-                    : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-500"
+                    : "border-line-strong bg-elevated text-ink-muted hover:border-line-strong"
                 }`}
               >
                 Pool
@@ -110,8 +110,8 @@ export default function DoctorDetailModal({
                       currentDay === d
                         ? "border-cyan-400 bg-cyan-500/20 text-cyan-300"
                         : disabled
-                        ? "cursor-not-allowed border-zinc-800 bg-zinc-900 text-zinc-600"
-                        : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-500"
+                        ? "cursor-not-allowed border-line bg-card text-ink-faintest"
+                        : "border-line-strong bg-elevated text-ink-muted hover:border-line-strong"
                     }`}
                   >
                     {DAY_LABEL[d].short}
@@ -119,7 +119,7 @@ export default function DoctorDetailModal({
                 );
               })}
             </div>
-            <p className="mt-1.5 text-[11px] text-zinc-600">
+            <p className="mt-1.5 text-[11px] text-ink-faintest">
               Hari yang tidak praktek dinonaktifkan.
             </p>
           </div>
@@ -131,7 +131,7 @@ export default function DoctorDetailModal({
               className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
                 card.priority
                   ? "border-sky-400 bg-sky-500/20 text-sky-300 shadow-[0_0_12px_rgba(56,189,248,0.4)]"
-                  : "border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-sky-400"
+                  : "border-line-strong bg-elevated text-ink-2 hover:border-sky-400"
               }`}
             >
               <Star size={16} fill={card.priority ? "currentColor" : "none"} />
@@ -142,7 +142,7 @@ export default function DoctorDetailModal({
               className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
                 card.visited
                   ? "border-emerald-400 bg-emerald-500/20 text-emerald-300"
-                  : "border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-emerald-400"
+                  : "border-line-strong bg-elevated text-ink-2 hover:border-emerald-400"
               }`}
             >
               {card.visited ? <CheckCircle2 size={16} /> : <Circle size={16} />}
@@ -153,7 +153,7 @@ export default function DoctorDetailModal({
               className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
                 card.flexible
                   ? "border-amber-400 bg-amber-500/20 text-amber-300"
-                  : "border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-amber-400"
+                  : "border-line-strong bg-elevated text-ink-2 hover:border-amber-400"
               }`}
             >
               <Clock size={16} />
@@ -163,16 +163,16 @@ export default function DoctorDetailModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-zinc-800 bg-zinc-900 px-5 py-3">
+        <div className="flex items-center justify-between border-t border-line bg-card px-5 py-3">
           <button
             onClick={() => onDelete(card.id)}
-            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-zinc-500 transition-colors hover:text-red-400"
+            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-ink-faint transition-colors hover:text-red-400"
           >
             <Trash2 size={15} /> Hapus
           </button>
           <button
             onClick={onClose}
-            className="rounded-lg bg-zinc-800 px-4 py-1.5 text-sm text-zinc-200 hover:bg-zinc-700"
+            className="rounded-lg bg-elevated px-4 py-1.5 text-sm text-ink-2 hover:bg-elevated-strong"
           >
             Tutup
           </button>

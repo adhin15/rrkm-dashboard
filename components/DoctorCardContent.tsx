@@ -10,7 +10,7 @@ const STATE_STYLES: Record<CardState, string> = {
   "invalid-day": "border-red-500 bg-red-500/10",
   "collision-different-outlet": "border-pink-400 bg-pink-400/10",
   "collision-same-outlet": "border-emerald-400 bg-emerald-400/10",
-  ok: "border-zinc-700 bg-zinc-800/60",
+  ok: "border-line-strong bg-elevated/60",
 };
 
 const STATE_BADGE: Record<CardState, { label: string; cls: string } | null> = {
@@ -51,14 +51,14 @@ export default function DoctorCardContent({
       title={issue.message}
       onClick={overlay ? undefined : () => onOpenDetail(card)}
       className={`group relative rounded-lg border px-3 py-2.5 shadow-sm ${STATE_STYLES[issue.state]} ${
-        overlay ? "cursor-grabbing ring-2 ring-cyan-400" : "transition-colors hover:border-zinc-500"
+        overlay ? "cursor-grabbing ring-2 ring-cyan-400" : "transition-colors hover:border-line-strong"
       } ${card.visited ? "opacity-80" : ""} ${dragHandleProps ? "pl-12" : ""}`}
     >
       {/* Handle grip (mobile): hanya area ini yang draggable */}
       {dragHandleProps && (
         <div
           {...dragHandleProps}
-          className="absolute left-1.5 top-1/2 flex h-11 w-9 -translate-y-1/2 cursor-grab touch-none items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-300 shadow-sm active:cursor-grabbing active:border-cyan-400"
+          className="absolute left-1.5 top-1/2 flex h-11 w-9 -translate-y-1/2 cursor-grab touch-none items-center justify-center rounded-lg border border-line-strong bg-elevated text-ink-2 shadow-sm active:cursor-grabbing active:border-cyan-400"
           title="Tahan untuk drag"
           aria-label="Drag"
         >
@@ -67,7 +67,7 @@ export default function DoctorCardContent({
       )}
       {/* Corner hijau untuk visited */}
       {card.visited && (
-        <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-bl-lg border-b border-l border-zinc-800 bg-emerald-400 text-zinc-950">
+        <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-bl-lg border-b border-l border-line bg-emerald-400 text-on-accent">
           <Check size={12} strokeWidth={3} />
         </span>
       )}
@@ -76,7 +76,7 @@ export default function DoctorCardContent({
           className={`text-sm font-medium ${
             card.priority
               ? "text-sky-400 drop-shadow-[0_0_6px_rgba(56,189,248,0.9)]"
-              : "text-zinc-100"
+              : "text-ink"
           }`}
         >
           {card.name}
@@ -91,7 +91,7 @@ export default function DoctorCardContent({
               className={`rounded p-0.5 transition-colors group-hover:opacity-100 ${
                 card.flexible
                   ? "text-amber-300 opacity-100"
-                  : "text-zinc-600 opacity-0 hover:text-amber-300"
+                  : "text-ink-faintest opacity-0 hover:text-amber-300"
               }`}
               title={card.flexible ? "Jadwal fleksibel (klik untuk matikan)" : "Tandai jadwal fleksibel"}
               aria-label={card.flexible ? "Jadwal fleksibel" : "Tandai fleksibel"}
@@ -103,7 +103,7 @@ export default function DoctorCardContent({
                 e.stopPropagation();
                 onDelete(card.id);
               }}
-              className="shrink-0 rounded p-0.5 text-zinc-600 opacity-0 transition-opacity hover:text-red-400 group-hover:opacity-100"
+              className="shrink-0 rounded p-0.5 text-ink-faintest opacity-0 transition-opacity hover:text-red-400 group-hover:opacity-100"
               aria-label="Hapus"
             >
               <Trash2 size={14} />
@@ -112,7 +112,7 @@ export default function DoctorCardContent({
         )}
       </div>
 
-      <p className="text-xs text-zinc-400">{card.outlet}</p>
+      <p className="text-xs text-ink-muted">{card.outlet}</p>
 
       {/* Badge fleksibel */}
       {card.flexible && (

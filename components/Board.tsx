@@ -189,13 +189,13 @@ export default function Board({ doctors }: Props) {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           {/* View toggle */}
-          <div className="flex rounded-lg border border-zinc-800 bg-zinc-900 p-0.5">
+          <div className="flex rounded-lg border border-line bg-card p-0.5">
             <button
               onClick={() => setView("kanban")}
               className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors ${
                 view === "kanban"
                   ? "bg-cyan-500/20 text-cyan-300"
-                  : "text-zinc-400 hover:text-zinc-200"
+                  : "text-ink-muted hover:text-ink-2"
               }`}
             >
               <Kanban size={15} /> Kanban
@@ -205,7 +205,7 @@ export default function Board({ doctors }: Props) {
               className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors ${
                 view === "table"
                   ? "bg-cyan-500/20 text-cyan-300"
-                  : "text-zinc-400 hover:text-zinc-200"
+                  : "text-ink-muted hover:text-ink-2"
               }`}
             >
               <TableIcon size={15} /> Table
@@ -248,7 +248,7 @@ export default function Board({ doctors }: Props) {
           ) : (
             <button
               onClick={() => setConfirmReset(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-300 transition-colors hover:border-amber-400 hover:text-amber-300"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-line-strong bg-elevated px-3 py-2 text-sm font-medium text-ink-2 transition-colors hover:border-amber-400 hover:text-amber-300"
             >
               <RefreshCcw size={15} /> Set Minggu Baru
             </button>
@@ -287,15 +287,15 @@ export default function Board({ doctors }: Props) {
       )}
 
       {/* Toolbar Filter & Sort */}
-      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900/50 p-3">
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-card/50 p-3">
         <div className="flex items-center gap-1.5">
           <ListFilter size={15} className="text-cyan-400" />
-          <span className="text-xs font-medium text-zinc-300">Filter</span>
+          <span className="text-xs font-medium text-ink-2">Filter</span>
         </div>
 
         {/* Filter hari */}
         <div className="flex flex-wrap items-center gap-1">
-          <span className="mr-1 text-[11px] text-zinc-500">Hari:</span>
+          <span className="mr-1 text-[11px] text-ink-faint">Hari:</span>
           {DAY_ORDER.map((d) => (
             <button
               key={d}
@@ -303,7 +303,7 @@ export default function Board({ doctors }: Props) {
               className={`rounded-md border px-2 py-1 text-xs transition-colors ${
                 filterDays.includes(d)
                   ? "border-cyan-400 bg-cyan-500/20 text-cyan-300"
-                  : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:border-zinc-500"
+                  : "border-line-strong bg-elevated text-ink-muted hover:border-line-strong"
               }`}
             >
               {DAY_LABEL[d].short}
@@ -313,29 +313,29 @@ export default function Board({ doctors }: Props) {
 
         {/* Filter range jam */}
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] text-zinc-500">Jam:</span>
+          <span className="text-[11px] text-ink-faint">Jam:</span>
           <input
             type="time"
             value={filterStart}
             onChange={(e) => setFilterStart(e.target.value)}
-            className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-1 text-xs text-zinc-100 outline-none focus:border-cyan-400"
+            className="rounded border border-line-strong bg-elevated px-1.5 py-1 text-xs text-ink outline-none focus:border-cyan-400"
           />
-          <span className="text-zinc-500">–</span>
+          <span className="text-ink-faint">–</span>
           <input
             type="time"
             value={filterEnd}
             onChange={(e) => setFilterEnd(e.target.value)}
-            className="rounded border border-zinc-700 bg-zinc-800 px-1.5 py-1 text-xs text-zinc-100 outline-none focus:border-cyan-400"
+            className="rounded border border-line-strong bg-elevated px-1.5 py-1 text-xs text-ink outline-none focus:border-cyan-400"
           />
         </div>
 
         {/* Filter rumah sakit */}
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] text-zinc-500">RS:</span>
+          <span className="text-[11px] text-ink-faint">RS:</span>
           <select
             value={filterOutlet}
             onChange={(e) => setFilterOutlet(e.target.value)}
-            className="max-w-[180px] rounded border border-zinc-700 bg-zinc-800 px-2 py-1 text-xs text-zinc-100 outline-none focus:border-cyan-400"
+            className="max-w-[180px] rounded border border-line-strong bg-elevated px-2 py-1 text-xs text-ink outline-none focus:border-cyan-400"
           >
             <option value="">Semua RS</option>
             {outlets.map((o) => (
@@ -347,7 +347,7 @@ export default function Board({ doctors }: Props) {
         {hasFilter && (
           <button
             onClick={clearFilters}
-            className="rounded-md border border-zinc-600 px-2 py-1 text-xs text-zinc-300 hover:border-red-400 hover:text-red-300"
+            className="rounded-md border border-line-strong px-2 py-1 text-xs text-ink-2 hover:border-red-400 hover:text-red-300"
           >
             Bersihkan
           </button>
@@ -355,11 +355,11 @@ export default function Board({ doctors }: Props) {
 
         {/* Sorting */}
         <div className="ml-auto flex items-center gap-1.5">
-          <span className="text-[11px] text-zinc-500">Urutkan:</span>
+          <span className="text-[11px] text-ink-faint">Urutkan:</span>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as SortOption)}
-            className="rounded border border-zinc-700 bg-zinc-800 px-2 py-1 text-xs text-zinc-100 outline-none focus:border-cyan-400"
+            className="rounded border border-line-strong bg-elevated px-2 py-1 text-xs text-ink outline-none focus:border-cyan-400"
           >
             {(Object.keys(SORT_LABELS) as SortOption[]).map((opt) => (
               <option key={opt} value={opt}>{SORT_LABELS[opt]}</option>

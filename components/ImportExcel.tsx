@@ -271,10 +271,10 @@ export default function ImportExcel({ onImported }: Props) {
   }
 
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
+    <div className="rounded-xl border border-line bg-card/50 p-4">
       <div className="mb-3 flex items-center gap-2">
         <FileSpreadsheet size={18} className="text-emerald-400" />
-        <h3 className="text-sm font-semibold text-zinc-100">Import dari Excel</h3>
+        <h3 className="text-sm font-semibold text-ink">Import dari Excel</h3>
       </div>
 
       <input
@@ -287,13 +287,13 @@ export default function ImportExcel({ onImported }: Props) {
       />
       <label
         htmlFor="excel-file"
-        className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-600 p-3 text-sm text-zinc-400 transition-colors hover:border-emerald-400 hover:text-emerald-300"
+        className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-line-strong p-3 text-sm text-ink-muted transition-colors hover:border-emerald-400 hover:text-emerald-300"
       >
         <Upload size={16} /> Pilih file Excel / CSV
       </label>
 
-      <p className="mt-2 text-[11px] leading-relaxed text-zinc-600">
-        Kolom Jadwal contoh: <code className="text-zinc-500">Senin : 09.00 - 13.00 dan 16.00 - 17.00</code>.
+      <p className="mt-2 text-[11px] leading-relaxed text-ink-faintest">
+        Kolom Jadwal contoh: <code className="text-ink-faint">Senin : 09.00 - 13.00 dan 16.00 - 17.00</code>.
         &quot;selesai&quot; dianggap +2 jam.
       </p>
 
@@ -310,11 +310,11 @@ export default function ImportExcel({ onImported }: Props) {
             ] as const
           ).map(([key, label]) => (
             <div key={key} className="flex items-center gap-2">
-              <label className="w-32 shrink-0 text-xs text-zinc-400">{label}</label>
+              <label className="w-32 shrink-0 text-xs text-ink-muted">{label}</label>
               <select
                 value={mapping[key]}
                 onChange={(e) => setMapping({ ...mapping, [key]: e.target.value })}
-                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-2 py-1.5 text-xs text-zinc-100 outline-none focus:border-emerald-400"
+                className="w-full rounded-lg border border-line-strong bg-elevated px-2 py-1.5 text-xs text-ink outline-none focus:border-emerald-400"
               >
                 <option value="">— pilih kolom —</option>
                 {headers.map((h) => (
@@ -324,11 +324,11 @@ export default function ImportExcel({ onImported }: Props) {
             </div>
           ))}
           <div className="flex items-center justify-between pt-1">
-            <span className="text-xs text-zinc-500">{rows.length} baris data</span>
+            <span className="text-xs text-ink-faint">{rows.length} baris data</span>
             <button
               onClick={handleImport}
               disabled={loading}
-              className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-zinc-950 transition-colors hover:bg-emerald-400 disabled:opacity-50"
+              className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-emerald-400 disabled:opacity-50"
             >
               {loading ? "Mengimpor..." : "Import"}
             </button>
