@@ -10,11 +10,14 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
 } from "@dnd-kit/core";
 import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import KanbanColumn from "./KanbanColumn";
+import DoctorCardContent from "./DoctorCardContent";
 import { DAY_ORDER, type DayKey, type DoctorDTO } from "@/lib/types";
 import { isPracticingOn } from "@/lib/collision";
 import { passesFilter, sortDoctors, type SortOption } from "@/lib/filters";
@@ -32,6 +35,7 @@ interface Props {
   filterDays: DayKey[];
   filterStart: string;
   filterEnd: string;
+  filterOutlet: string;
   sortBy: SortOption;
 }
 
@@ -62,9 +66,11 @@ export default function KanbanBoard({
   filterDays,
   filterStart,
   filterEnd,
+  filterOutlet,
   sortBy,
 }: Props) {
   const [toast, setToast] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   // dnd-kit (DndContext/useSortable) punya ID internal yang berbeda antara
   // render server vs client → hydration mismatch yang merusak drag.
   // Solusi: render board hanya setelah mount di client (via useSyncExternalStore).
@@ -75,15 +81,18 @@ export default function KanbanBoard({
   );
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    // distance kecil = drag aktif lebih cepat (kurangi delay terasa)
+    useSensor(PointerSensor, { activationConstraint: { distance: 3 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 3 } }),
+    // Mobile: handle grip sudah jadi target drag yang disengaja,
+    // jadi tidak perlu long-press delay — drag langsung aktif.
     useSensor(TouchSensor, {
-      activationConstraint: { delay: 200, tolerance: 5 },
+      activationConstraint: { delay: 0, tolerance: 8 },
     })
   );
 
   const filteredDoctors = doctors.filter((d) =>
-    passesFilter(d, filterDays, filterStart, filterEnd)
+    passesFilter(d, filterDays, filterStart, filterEnd, filterOutlet)
   );
   const groups = groupByColumn(filteredDoctors);
 
@@ -99,7 +108,16 @@ export default function KanbanBoard({
     setTimeout(() => setToast(null), 3500);
   }
 
+  function handleDragStart(event: DragStartEvent) {
+    setActiveId(String(event.active.id));
+  }
+
+  function handleDragCancel() {
+    setActiveId(null);
+  }
+
   async function handleDragEnd(event: DragEndEvent) {
+    setActiveId(null);
     const { active, over } = event;
     if (!over) return;
 
@@ -179,9 +197,11 @@ export default function KanbanBoard({
         <DndContext
           sensors={sensors}
           collisionDetection={pointerWithin}
+          onDragStart={handleDragStart}
+          onDragCancel={handleDragCancel}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex items-start gap-3 overflow-x-auto pb-4">
+          <div className="flex items-start gap-3 overflow-x-auto pb-4 sm:snap-none">
             {/* Kolom Pool dulu */}
             <KanbanColumn day="POOL" cards={sortedGroups.POOL} isPool onDelete={onDelete} onToggleFlexible={onToggleFlexible} onOpenDetail={onOpenDetail} />
 
@@ -190,6 +210,20 @@ export default function KanbanBoard({
               <KanbanColumn key={day} day={day} cards={sortedGroups[day]} onDelete={onDelete} onToggleFlexible={onToggleFlexible} onOpenDetail={onOpenDetail} />
             ))}
           </div>
+
+          {/* Overlay yang mengikuti pointer saat drag — card asli tetap di tempat */}
+          <DragOverlay>
+            {activeId ? (
+              <DoctorCardContent
+                card={doctors.find((d) => d.id === activeId)!}
+                issue={{ state: "ok", message: "" }}
+                onDelete={onDelete}
+                onToggleFlexible={onToggleFlexible}
+                onOpenDetail={() => {}}
+                overlay
+              />
+            ) : null}
+          </DragOverlay>
         </DndContext>
       )}
     </div>

@@ -36,7 +36,7 @@ export default function KanbanColumn({ day, cards, isPool, onDelete, onToggleFle
   return (
     <div
       ref={setNodeRef}
-      className={`flex min-w-[240px] flex-1 flex-col rounded-xl border bg-zinc-900/50 ${
+      className={`flex w-[50vw] shrink-0 snap-start flex-col rounded-xl border bg-zinc-900/50 sm:w-auto sm:min-w-[240px] sm:flex-1 ${
         isOver ? "border-cyan-400 ring-2 ring-cyan-400/30" : "border-zinc-800"
       }`}
     >

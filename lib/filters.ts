@@ -17,15 +17,22 @@ function inTimeRange(sched: ScheduleDTO, start: string, end: string): boolean {
   return parseTime(sched.startTime) < parseTime(end) && parseTime(start) < parseTime(sched.endTime);
 }
 
-// Filter: apakah dokter lolos filter hari + range jam.
+// Filter: apakah dokter lolos filter hari + range jam + outlet.
 // - filterDays kosong = semua hari (tanpa filter hari)
 // - start/end kosong = tanpa filter jam (00:00-24:00)
+// - filterOutlet kosong = semua outlet
 export function passesFilter(
   doctor: DoctorDTO,
   filterDays: DayKey[],
   filterStart: string,
-  filterEnd: string
+  filterEnd: string,
+  filterOutlet: string = ""
 ): boolean {
+  // Filter outlet: cocokkan nama outlet (case-insensitive)
+  if (filterOutlet && doctor.outlet.toLowerCase() !== filterOutlet.toLowerCase()) {
+    return false;
+  }
+
   // Filter hari: dokter harus praktek di minimal satu hari terpilih
   if (filterDays.length > 0) {
     const practicesInSelected = filterDays.some((d) => schedulesOnDay(doctor, d).length > 0);

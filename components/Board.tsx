@@ -24,6 +24,7 @@ export default function Board({ doctors }: Props) {
   const [filterDays, setFilterDays] = useState<DayKey[]>([]);
   const [filterStart, setFilterStart] = useState("");
   const [filterEnd, setFilterEnd] = useState("");
+  const [filterOutlet, setFilterOutlet] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("position");
   const [detailCardId, setDetailCardId] = useState<string | null>(null);
   const [confirmAssign, setConfirmAssign] = useState(false);
@@ -168,13 +169,19 @@ export default function Board({ doctors }: Props) {
     );
   }
 
-  const hasFilter = filterDays.length > 0 || !!filterStart || !!filterEnd;
+  const hasFilter = filterDays.length > 0 || !!filterStart || !!filterEnd || !!filterOutlet;
 
   function clearFilters() {
     setFilterDays([]);
     setFilterStart("");
     setFilterEnd("");
+    setFilterOutlet("");
   }
+
+  // Daftar outlet unik (untuk dropdown filter rumah sakit)
+  const outlets = Array.from(new Set(doctors.map((d) => d.outlet))).sort((a, b) =>
+    a.localeCompare(b)
+  );
 
   return (
     <div>
@@ -206,7 +213,7 @@ export default function Board({ doctors }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Auto Assign */}
           {confirmAssign ? (
             <div className="flex items-center gap-2 rounded-lg border border-cyan-500 bg-cyan-950/50 px-3 py-1.5">
@@ -266,9 +273,9 @@ export default function Board({ doctors }: Props) {
               <Trash2 size={15} /> Hapus Semua
             </button>
           )}
-          <ImportExcel onImported={refresh} />
           <ExportButton doctors={doctors} />
           <DoctorForm onAdded={refresh} />
+          <ImportExcel onImported={refresh} />
         </div>
       </div>
 
@@ -322,6 +329,21 @@ export default function Board({ doctors }: Props) {
           />
         </div>
 
+        {/* Filter rumah sakit */}
+        <div className="flex items-center gap-1.5">
+          <span className="text-[11px] text-zinc-500">RS:</span>
+          <select
+            value={filterOutlet}
+            onChange={(e) => setFilterOutlet(e.target.value)}
+            className="max-w-[180px] rounded border border-zinc-700 bg-zinc-800 px-2 py-1 text-xs text-zinc-100 outline-none focus:border-cyan-400"
+          >
+            <option value="">Semua RS</option>
+            {outlets.map((o) => (
+              <option key={o} value={o}>{o}</option>
+            ))}
+          </select>
+        </div>
+
         {hasFilter && (
           <button
             onClick={clearFilters}
@@ -348,7 +370,7 @@ export default function Board({ doctors }: Props) {
 
       {/* View */}
       {view === "kanban" ? (
-        <KanbanBoard doctors={doctors} onMove={handleMove} onDelete={handleDelete} onToggleFlexible={handleToggleFlexible} onOpenDetail={(c) => setDetailCardId(c.id)} filterDays={filterDays} filterStart={filterStart} filterEnd={filterEnd} sortBy={sortBy} />
+        <KanbanBoard doctors={doctors} onMove={handleMove} onDelete={handleDelete} onToggleFlexible={handleToggleFlexible} onOpenDetail={(c) => setDetailCardId(c.id)} filterDays={filterDays} filterStart={filterStart} filterEnd={filterEnd} filterOutlet={filterOutlet} sortBy={sortBy} />
       ) : (
         <TableView doctors={doctors} />
       )}
