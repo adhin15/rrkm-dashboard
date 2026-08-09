@@ -110,12 +110,46 @@ function parseTime(s: string): string | null {
 }
 
 // Parse sel text jadwal: "Senin : 09.00 - 13.00 dan 16.00 - 17.00"
-// atau format flat "09.00" / "13.00" per kolom. Mengembalikan array schedule.
-function parseScheduleText(raw: string): { day: DayKey; startTime: string; endTime: string }[] {
+// atau format flat "09.00" / "13.00" per kolom.
+// Juga handle "Setiap Hari" -> Senin-Sabtu (6 hari).
+// Mengembalikan { schedules, flexible }.
+function parseScheduleText(raw: string): {
+  schedules: { day: DayKey; startTime: string; endTime: string }[];
+  flexible: boolean;
+} {
   const out: { day: DayKey; startTime: string; endTime: string }[] = [];
+  let flexible = false;
   const parts = raw.split(/[;,|]/).filter(Boolean);
   for (const part of parts) {
-    const m = part.match(/^([A-Za-z]+)\s*:\s*(.+)$/);
+    const trimmed = part.trim();
+
+    // "Setiap Hari" (dengan atau tanpa jam) -> Senin-Sabtu
+    const setiap = trimmed.match(/^setiap\s+hari\s*([\s\S]*)$/i);
+    if (setiap) {
+      const rest = setiap[1].trim();
+      // cari jam di awal (ignore teks tambahan setelahnya, mis. "konfirmasi apotek dulu")
+      const tm = rest.match(/^(\d{1,2}[.:]\d{2})\s*[-–]\s*(\d{1,2}[.:]\d{2})/);
+      if (tm) {
+        // ada jam spesifik -> terapkan ke 6 hari
+        const start = parseTime(tm[1]);
+        const end = parseTime(tm[2]);
+        if (start && end) {
+          for (const day of ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"] as DayKey[]) {
+            out.push({ day, startTime: start, endTime: end });
+          }
+        }
+      } else {
+        // tanpa jam -> flexible, default 09:00-18:00 utk 6 hari
+        flexible = true;
+        for (const day of ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"] as DayKey[]) {
+          out.push({ day, startTime: "09:00", endTime: "18:00" });
+        }
+      }
+      continue;
+    }
+
+    // format normal "Hari : jam"
+    const m = trimmed.match(/^([A-Za-z]+)\s*:\s*(.+)$/);
     if (!m) continue;
     const day = parseDay(m[1]);
     if (!day) continue;
@@ -134,7 +168,7 @@ function parseScheduleText(raw: string): { day: DayKey; startTime: string; endTi
       if (start && end) out.push({ day, startTime: start, endTime: end });
     }
   }
-  return out;
+  return { schedules: out, flexible };
 }
 
 export default function ImportExcel({ onImported }: Props) {
@@ -206,8 +240,8 @@ export default function ImportExcel({ onImported }: Props) {
       const name = String(r[mapping.name] ?? "").trim();
       const outlet = String(r[mapping.outlet] ?? "").trim();
       const scheduleRaw = String(r[mapping.schedule] ?? "");
-      const schedules = parseScheduleText(scheduleRaw);
-      return { name, outlet, schedules };
+      const { schedules, flexible } = parseScheduleText(scheduleRaw);
+      return { name, outlet, schedules, flexible };
     });
 
     setLoading(true);
