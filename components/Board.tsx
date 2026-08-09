@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Kanban, Table as TableIcon, RefreshCcw, ListFilter, Wand2 } from "lucide-react";
+import { Kanban, Table as TableIcon, RefreshCcw, ListFilter, Wand2, Trash2 } from "lucide-react";
 import KanbanBoard from "./KanbanBoard";
 import TableView from "./TableView";
 import DoctorForm from "./DoctorForm";
@@ -28,6 +28,7 @@ export default function Board({ doctors }: Props) {
   const [detailCardId, setDetailCardId] = useState<string | null>(null);
   const [confirmAssign, setConfirmAssign] = useState(false);
   const [assignMsg, setAssignMsg] = useState<string | null>(null);
+  const [confirmFlush, setConfirmFlush] = useState(false);
   const router = useRouter();
 
   // Derive popup card dari data terbaru setiap render — jadi setiap refresh,
@@ -112,6 +113,20 @@ export default function Board({ doctors }: Props) {
     await fetch("/api/doctors", { method: "PUT" });
     setConfirmReset(false);
     refresh();
+  }
+
+  async function handleFlush() {
+    // Konfirmasi ganda: state confirmFlush harus sudah true (langkah ke-2)
+    setConfirmFlush(false);
+    const res = await fetch("/api/doctors/flush", { method: "POST" });
+    if (res.ok) {
+      refresh();
+      setAssignMsg("🗑 Semua data dokter telah dihapus. Silakan import data minggu baru.");
+      setTimeout(() => setAssignMsg(null), 5000);
+    } else {
+      setAssignMsg("❌ Gagal menghapus data.");
+      setTimeout(() => setAssignMsg(null), 5000);
+    }
   }
 
   async function handleAutoAssign() {
@@ -229,6 +244,26 @@ export default function Board({ doctors }: Props) {
               className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-300 transition-colors hover:border-amber-400 hover:text-amber-300"
             >
               <RefreshCcw size={15} /> Set Minggu Baru
+            </button>
+          )}
+          {/* Flush semua data */}
+          {confirmFlush ? (
+            <div className="flex items-center gap-2 rounded-lg border border-red-500 bg-red-950/50 px-3 py-1.5">
+              <span className="text-xs text-red-200">Hapus SEMUA data dokter? (tidak bisa dibatalkan)</span>
+              <button onClick={handleFlush} className="text-xs font-semibold text-red-300 hover:text-red-100">
+                Ya, hapus semua
+              </button>
+              <button onClick={() => setConfirmFlush(false)} className="text-xs text-red-400/70 hover:text-red-200">
+                Batal
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmFlush(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-red-900 bg-red-950/40 px-3 py-2 text-sm font-medium text-red-400 transition-colors hover:border-red-500 hover:text-red-300"
+              title="Hapus semua data dokter & jadwal. Untuk ganti minggu & import daftar baru dari nol."
+            >
+              <Trash2 size={15} /> Hapus Semua
             </button>
           )}
           <ImportExcel onImported={refresh} />
