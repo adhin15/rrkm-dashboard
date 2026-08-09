@@ -58,7 +58,7 @@ export default function DoctorCardContent({
       {dragHandleProps && (
         <div
           {...dragHandleProps}
-          className="absolute left-1.5 top-1/2 flex h-11 w-9 -translate-y-1/2 cursor-grab items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-300 shadow-sm active:cursor-grabbing active:border-cyan-400"
+          className="absolute left-1.5 top-1/2 flex h-11 w-9 -translate-y-1/2 cursor-grab touch-none items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-300 shadow-sm active:cursor-grabbing active:border-cyan-400"
           title="Tahan untuk drag"
           aria-label="Drag"
         >

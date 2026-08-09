@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Upload, FileSpreadsheet } from "lucide-react";
-import * as XLSX from "xlsx";
+import type { WorkSheet } from "xlsx";
 import type { DayKey } from "@/lib/types";
 
 interface Props {
@@ -39,11 +39,11 @@ function parseDay(s: string): DayKey | null {
  *    tiap baris berisi 1 hari jadwal) — nama di-forward-fill & jadwal digabung
  *  - Format standar (header row 1, semua hari dalam 1 sel)
  */
-function normalizeSheet(sheet: XLSX.WorkSheet): {
+function normalizeSheet(xlsx: typeof import("xlsx"), sheet: WorkSheet): {
   headers: string[];
   rows: Record<string, unknown>[];
 } | null {
-  const raw = XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, defval: "" });
+  const raw = xlsx.utils.sheet_to_json<unknown[]>(sheet, { header: 1, defval: "" });
   if (!raw.length) return null;
 
   const isName = (v: unknown) => /nama|name|dokter|doctor/i.test(String(v));
@@ -185,8 +185,11 @@ export default function ImportExcel({ onImported }: Props) {
     setMsg(null);
 
     const reader = new FileReader();
-    reader.onload = (ev) => {
+    reader.onload = async (ev) => {
       try {
+        // Dynamic import: xlsx (7MB) hanya di-load saat user pilih file,
+        // tidak ikut bundle utama → performa mobile jauh lebih ringan.
+        const XLSX = await import("xlsx");
         const wb = XLSX.read(ev.target?.result, { type: "array" });
 
         // Pilih sheet terbaik: coba semua, ambil yang menghasilkan dokter terbanyak
@@ -194,7 +197,7 @@ export default function ImportExcel({ onImported }: Props) {
         let best: { headers: string[]; rows: Record<string, unknown>[] } | null = null;
         let bestScore = -1;
         for (const name of wb.SheetNames) {
-          const n = normalizeSheet(wb.Sheets[name]);
+          const n = normalizeSheet(XLSX, wb.Sheets[name]);
           if (!n || n.rows.length === 0) continue;
           const withOutlet = n.rows.filter((r) => String(r.Outlet ?? "").trim()).length;
           const score = n.rows.length + withOutlet; // preferensi: banyak baris + outlet lengkap

@@ -1,7 +1,6 @@
 "use client";
 
 import { Download } from "lucide-react";
-import * as XLSX from "xlsx";
 import type { DoctorDTO } from "@/lib/types";
 import { DAY_ORDER, DAY_LABEL } from "@/lib/types";
 
@@ -11,7 +10,11 @@ interface Props {
 
 // Export seluruh data dokter (termasuk jadwal & status) ke file .xlsx
 export default function ExportButton({ doctors }: Props) {
-  function handleExport() {
+  async function handleExport() {
+    // Dynamic import: xlsx (7MB) hanya di-load saat user klik Export,
+    // tidak ikut bundle utama → performa mobile jauh lebih ringan.
+    const XLSX = await import("xlsx");
+
     const rows = doctors.map((d) => {
       const schedText = DAY_ORDER.map((day) => {
         const scheds = d.schedules.filter((s) => s.day === day);
