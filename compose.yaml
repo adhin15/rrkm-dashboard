@@ -1,0 +1,20 @@
+services:
+  rrkm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rrkm
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - proxy
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/dev.db
+
+networks:
+  proxy:
+    external: true

@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+logs
+data
+*.log
+prisma/dev.db
+prisma/dev.db-journal
+Dockerfile
+docker-entrypoint.sh
+deploy.sh
+compose.yaml
+README.md
+.env*
