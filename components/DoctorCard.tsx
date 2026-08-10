@@ -13,6 +13,7 @@ interface Props {
   onDelete: (id: string) => void;
   onToggleFlexible: (id: string) => void;
   onOpenDetail: (card: DoctorDTO) => void;
+  onDuplicate: (id: string) => void;
 }
 
 // Wrapper sortable tipis. Isi card ada di DoctorCardContent (dipakai juga
@@ -23,7 +24,7 @@ interface Props {
 //  - Desktop (>=640px): seluruh card draggable (listeners di wrapper).
 //  - Mobile (<640px): hanya handle grip yang draggable, agar tidak konflik
 //    dengan scroll vertikal kolom (sentuhan di card = scroll, di grip = drag).
-export default function DoctorCard({ card, issue, onDelete, onToggleFlexible, onOpenDetail }: Props) {
+export default function DoctorCard({ card, issue, onDelete, onToggleFlexible, onOpenDetail, onDuplicate }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: card.id });
 
@@ -55,6 +56,7 @@ export default function DoctorCard({ card, issue, onDelete, onToggleFlexible, on
         onDelete={onDelete}
         onToggleFlexible={onToggleFlexible}
         onOpenDetail={onOpenDetail}
+        onDuplicate={onDuplicate}
         dragHandleProps={isMobile ? { ...attributes, ...listeners } : undefined}
       />
     </div>

@@ -32,10 +32,12 @@ interface Props {
   onDelete: (id: string) => void;
   onToggleFlexible: (id: string) => void;
   onOpenDetail: (card: DoctorDTO) => void;
+  onDuplicate: (id: string) => void;
   filterDays: DayKey[];
   filterStart: string;
   filterEnd: string;
   filterOutlet: string;
+  searchQuery: string;
   sortBy: SortOption;
 }
 
@@ -63,10 +65,12 @@ export default function KanbanBoard({
   onDelete,
   onToggleFlexible,
   onOpenDetail,
+  onDuplicate,
   filterDays,
   filterStart,
   filterEnd,
   filterOutlet,
+  searchQuery,
   sortBy,
 }: Props) {
   const [toast, setToast] = useState<string | null>(null);
@@ -91,9 +95,11 @@ export default function KanbanBoard({
     })
   );
 
-  const filteredDoctors = doctors.filter((d) =>
-    passesFilter(d, filterDays, filterStart, filterEnd, filterOutlet)
-  );
+  const q = searchQuery.trim().toLowerCase();
+  const filteredDoctors = doctors.filter((d) => {
+    if (q && !d.name.toLowerCase().includes(q)) return false;
+    return passesFilter(d, filterDays, filterStart, filterEnd, filterOutlet);
+  });
   const groups = groupByColumn(filteredDoctors);
 
   // Sort setiap kolom (kecuali Pool — biarkan urutan drag)
@@ -203,11 +209,11 @@ export default function KanbanBoard({
         >
           <div className="scrollbar-hide flex items-stretch gap-3 overflow-x-auto pb-4 sm:snap-none">
             {/* Kolom Pool dulu */}
-            <KanbanColumn day="POOL" cards={sortedGroups.POOL} isPool onDelete={onDelete} onToggleFlexible={onToggleFlexible} onOpenDetail={onOpenDetail} />
+            <KanbanColumn day="POOL" cards={sortedGroups.POOL} isPool onDelete={onDelete} onToggleFlexible={onToggleFlexible} onOpenDetail={onOpenDetail} onDuplicate={onDuplicate} />
 
             {/* Kolom hari */}
             {DAY_ORDER.map((day) => (
-              <KanbanColumn key={day} day={day} cards={sortedGroups[day]} onDelete={onDelete} onToggleFlexible={onToggleFlexible} onOpenDetail={onOpenDetail} />
+              <KanbanColumn key={day} day={day} cards={sortedGroups[day]} onDelete={onDelete} onToggleFlexible={onToggleFlexible} onOpenDetail={onOpenDetail} onDuplicate={onDuplicate} />
             ))}
           </div>
 
@@ -220,6 +226,7 @@ export default function KanbanBoard({
                 onDelete={onDelete}
                 onToggleFlexible={onToggleFlexible}
                 onOpenDetail={() => {}}
+                onDuplicate={() => {}}
                 overlay
               />
             ) : null}

@@ -69,3 +69,32 @@ export type CardState =
   | "collision-different-outlet" // MERAH MUDA — tabrakan jam, beda outlet
   | "collision-same-outlet" // HIJAU — tabrakan jam, outlet sama (aman)
   | "ok"; // normal
+
+// ===== Helper duplicate card =====
+
+// Ambil "base name" tanpa suffix duplikat "(N)".
+// "BUDI AGUNG (2)" -> "BUDI AGUNG"; "BUDI AGUNG" -> "BUDI AGUNG"
+export function baseName(name: string): string {
+  return name.replace(/\s*\(\d+\)\s*$/, "").trim();
+}
+
+// Hitung nama untuk duplikat berikutnya, konsisten & re-use angka yang kosong.
+// - Duplicate "BUDI AGUNG" (belum ada duplikat) -> "BUDI AGUNG (2)"
+// - Hapus "(2)", duplicate lagi -> tetap "(2)" (angka 2 kosong, di-reuse)
+// - Duplicate "BUDI AGUNG (2)" -> "BUDI AGUNG (3)" (angka sumber dianggap dipakai)
+// - Duplicate "BUDI AGUNG" saat "(2)" & "(3)" ada -> "(4)" (angka terkecil kosong)
+export function nextDuplicateName(allNames: string[], sourceName: string): string {
+  const base = baseName(sourceName);
+  const used = new Set<number>();
+  for (const n of allNames) {
+    const m = n.match(/^(.+?)\s*\((\d+)\)\s*$/);
+    if (m && m[1].trim() === base) used.add(Number(m[2]));
+  }
+  // Angka card sumber sendiri dianggap dipakai, supaya duplicate card yang
+  // sudah punya suffix menghasilkan angka berikutnya (bukan angka yang sama).
+  const srcM = sourceName.match(/^(.+?)\s*\((\d+)\)\s*$/);
+  if (srcM && srcM[1].trim() === base) used.add(Number(srcM[2]));
+  let i = 2;
+  while (used.has(i)) i++;
+  return `${base} (${i})`;
+}

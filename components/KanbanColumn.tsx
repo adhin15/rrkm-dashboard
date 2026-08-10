@@ -18,9 +18,10 @@ interface Props {
   onDelete: (id: string) => void;
   onToggleFlexible: (id: string) => void;
   onOpenDetail: (card: DoctorDTO) => void;
+  onDuplicate: (id: string) => void;
 }
 
-export default function KanbanColumn({ day, cards, isPool, onDelete, onToggleFlexible, onOpenDetail }: Props) {
+export default function KanbanColumn({ day, cards, isPool, onDelete, onToggleFlexible, onOpenDetail, onDuplicate }: Props) {
   // Droppable id: "POOL" untuk kolom pool, selain itu day key
   const droppableId = isPool ? "POOL" : (day as DayKey);
   const { setNodeRef, isOver } = useDroppable({ id: droppableId });
@@ -89,6 +90,7 @@ export default function KanbanColumn({ day, cards, isPool, onDelete, onToggleFle
                 onDelete={onDelete}
                 onToggleFlexible={onToggleFlexible}
                 onOpenDetail={onOpenDetail}
+                onDuplicate={onDuplicate}
               />
             ))
           )}

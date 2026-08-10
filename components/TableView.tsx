@@ -5,6 +5,7 @@ import { getCardState } from "@/lib/collision";
 
 interface Props {
   doctors: DoctorDTO[];
+  searchQuery?: string;
 }
 
 // Warna text untuk state di tabel
@@ -15,15 +16,18 @@ const STATE_TEXT: Record<string, string> = {
   ok: "text-ink-2",
 };
 
-export default function TableView({ doctors }: Props) {
+export default function TableView({ doctors, searchQuery = "" }: Props) {
+  const q = searchQuery.trim().toLowerCase();
+  const visible = q ? doctors.filter((d) => d.name.toLowerCase().includes(q)) : doctors;
+
   // Kelompokkan per hari (urutan hari), termasuk Pool di akhir
   const byDay = DAY_ORDER.map((day) => {
-    const cards = doctors
+    const cards = visible
       .filter((d) => d.scheduledDay === day)
       .sort((a, b) => a.position - b.position);
     return { day, cards };
   });
-  const pool = doctors
+  const pool = visible
     .filter((d) => d.scheduledDay === null)
     .sort((a, b) => a.position - b.position);
 

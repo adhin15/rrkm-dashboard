@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Kanban, Table as TableIcon, RefreshCcw, ListFilter, Wand2, Trash2 } from "lucide-react";
+import { Kanban, Table as TableIcon, RefreshCcw, ListFilter, Wand2, Trash2, Search } from "lucide-react";
 import KanbanBoard from "./KanbanBoard";
 import TableView from "./TableView";
 import DoctorForm from "./DoctorForm";
@@ -30,6 +30,7 @@ export default function Board({ doctors }: Props) {
   const [confirmAssign, setConfirmAssign] = useState(false);
   const [assignMsg, setAssignMsg] = useState<string | null>(null);
   const [confirmFlush, setConfirmFlush] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
   // Derive popup card dari data terbaru setiap render — jadi setiap refresh,
@@ -60,6 +61,20 @@ export default function Board({ doctors }: Props) {
     if (!confirm(`Hapus dokter ini?`)) return;
     await fetch(`/api/doctors?id=${id}`, { method: "DELETE" });
     refresh();
+  }
+
+  async function handleDuplicate(id: string) {
+    const res = await fetch("/api/doctors/duplicate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) {
+      refresh();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || "Gagal menduplikat dokter");
+    }
   }
 
   async function handleToggleFlexible(id: string) {
@@ -210,6 +225,18 @@ export default function Board({ doctors }: Props) {
             >
               <TableIcon size={15} /> Table
             </button>
+          </div>
+
+          {/* Search lokal (nama dokter, case-insensitive) */}
+          <div className="relative">
+            <Search size={15} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-faint" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari dokter..."
+              className="w-44 rounded-lg border border-line-strong bg-elevated py-2 pl-8 pr-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-cyan-400 sm:w-56"
+            />
           </div>
         </div>
 
@@ -370,9 +397,9 @@ export default function Board({ doctors }: Props) {
 
       {/* View */}
       {view === "kanban" ? (
-        <KanbanBoard doctors={doctors} onMove={handleMove} onDelete={handleDelete} onToggleFlexible={handleToggleFlexible} onOpenDetail={(c) => setDetailCardId(c.id)} filterDays={filterDays} filterStart={filterStart} filterEnd={filterEnd} filterOutlet={filterOutlet} sortBy={sortBy} />
+        <KanbanBoard doctors={doctors} onMove={handleMove} onDelete={handleDelete} onToggleFlexible={handleToggleFlexible} onOpenDetail={(c) => setDetailCardId(c.id)} onDuplicate={handleDuplicate} filterDays={filterDays} filterStart={filterStart} filterEnd={filterEnd} filterOutlet={filterOutlet} searchQuery={searchQuery} sortBy={sortBy} />
       ) : (
-        <TableView doctors={doctors} />
+        <TableView doctors={doctors} searchQuery={searchQuery} />
       )}
 
       {/* Popup detail */}

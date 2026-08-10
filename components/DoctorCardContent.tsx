@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2, Clock, Check, GripVertical } from "lucide-react";
+import { Trash2, Clock, Check, GripVertical, Copy } from "lucide-react";
 import type { DoctorDTO, CardState } from "@/lib/types";
 import { practiceDaysOf, DAY_LABEL } from "@/lib/types";
 import type { CardIssue } from "@/lib/collision";
@@ -26,6 +26,7 @@ interface Props {
   onDelete: (id: string) => void;
   onToggleFlexible: (id: string) => void;
   onOpenDetail: (card: DoctorDTO) => void;
+  onDuplicate: (id: string) => void;
   // Saat dipakai sebagai DragOverlay: non-interaktif, tanpa cursor grab
   overlay?: boolean;
   // Mobile: listeners drag dipasang di handle grip saja.
@@ -40,6 +41,7 @@ export default function DoctorCardContent({
   onDelete,
   onToggleFlexible,
   onOpenDetail,
+  onDuplicate,
   overlay,
   dragHandleProps,
 }: Props) {
@@ -97,6 +99,17 @@ export default function DoctorCardContent({
               aria-label={card.flexible ? "Jadwal fleksibel" : "Tandai fleksibel"}
             >
               <Clock size={14} />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDuplicate(card.id);
+              }}
+              className="shrink-0 rounded p-0.5 text-ink-faintest opacity-0 transition-opacity hover:text-cyan-300 group-hover:opacity-100"
+              title="Duplikat card (kunjungan ke-2)"
+              aria-label="Duplikat"
+            >
+              <Copy size={14} />
             </button>
             <button
               onClick={(e) => {
