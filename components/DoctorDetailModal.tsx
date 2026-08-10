@@ -1,6 +1,6 @@
 "use client";
 
-import { X, CheckCircle2, Circle, Clock, Star, Trash2 } from "lucide-react";
+import { X, CheckCircle2, Circle, Clock, Star, Trash2, Copy } from "lucide-react";
 import type { DoctorDTO, DayKey } from "@/lib/types";
 import { DAY_ORDER, DAY_LABEL } from "@/lib/types";
 
@@ -12,6 +12,7 @@ interface Props {
   onToggleVisited: (id: string) => void;
   onTogglePriority: (id: string) => void;
   onDelete: (id: string) => void;
+  onDuplicate: (id: string) => void;
 }
 
 export default function DoctorDetailModal({
@@ -22,6 +23,7 @@ export default function DoctorDetailModal({
   onToggleVisited,
   onTogglePriority,
   onDelete,
+  onDuplicate,
 }: Props) {
   const currentDay = card.scheduledDay;
 
@@ -164,12 +166,20 @@ export default function DoctorDetailModal({
 
         {/* Footer */}
         <div className="flex items-center justify-between border-t border-line bg-card px-5 py-3">
-          <button
-            onClick={() => onDelete(card.id)}
-            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-ink-faint transition-colors hover:text-red-400"
-          >
-            <Trash2 size={15} /> Hapus
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onDuplicate(card.id)}
+              className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-ink-faint transition-colors hover:text-cyan-300"
+            >
+              <Copy size={15} /> Duplikat
+            </button>
+            <button
+              onClick={() => onDelete(card.id)}
+              className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-ink-faint transition-colors hover:text-red-400"
+            >
+              <Trash2 size={15} /> Hapus
+            </button>
+          </div>
           <button
             onClick={onClose}
             className="rounded-lg bg-elevated px-4 py-1.5 text-sm text-ink-2 hover:bg-elevated-strong"

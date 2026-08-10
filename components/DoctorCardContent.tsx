@@ -73,9 +73,9 @@ export default function DoctorCardContent({
           <Check size={12} strokeWidth={3} />
         </span>
       )}
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
         <p
-          className={`text-sm font-medium ${
+          className={`min-w-0 text-sm font-medium ${
             card.priority
               ? "text-sky-400 drop-shadow-[0_0_6px_rgba(56,189,248,0.9)]"
               : "text-ink"
@@ -90,10 +90,10 @@ export default function DoctorCardContent({
                 e.stopPropagation();
                 onToggleFlexible(card.id);
               }}
-              className={`rounded p-0.5 transition-colors group-hover:opacity-100 ${
+              className={`rounded p-0.5 transition-colors ${
                 card.flexible
-                  ? "text-amber-300 opacity-100"
-                  : "text-ink-faintest opacity-0 hover:text-amber-300"
+                  ? "text-amber-300"
+                  : "text-ink-faintest hover:text-amber-300"
               }`}
               title={card.flexible ? "Jadwal fleksibel (klik untuk matikan)" : "Tandai jadwal fleksibel"}
               aria-label={card.flexible ? "Jadwal fleksibel" : "Tandai fleksibel"}
@@ -105,7 +105,7 @@ export default function DoctorCardContent({
                 e.stopPropagation();
                 onDuplicate(card.id);
               }}
-              className="shrink-0 rounded p-0.5 text-ink-faintest opacity-0 transition-opacity hover:text-cyan-300 group-hover:opacity-100"
+              className="shrink-0 rounded p-0.5 text-ink-faintest transition-colors hover:text-cyan-300"
               title="Duplikat card (kunjungan ke-2)"
               aria-label="Duplikat"
             >
@@ -116,7 +116,7 @@ export default function DoctorCardContent({
                 e.stopPropagation();
                 onDelete(card.id);
               }}
-              className="shrink-0 rounded p-0.5 text-ink-faintest opacity-0 transition-opacity hover:text-red-400 group-hover:opacity-100"
+              className="shrink-0 rounded p-0.5 text-ink-faintest transition-colors hover:text-red-400"
               aria-label="Hapus"
             >
               <Trash2 size={14} />

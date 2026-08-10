@@ -412,6 +412,7 @@ export default function Board({ doctors }: Props) {
           onToggleVisited={handleToggleVisited}
           onTogglePriority={handleTogglePriority}
           onDelete={handleDeleteFromModal}
+          onDuplicate={handleDuplicate}
         />
       )}
     </div>
