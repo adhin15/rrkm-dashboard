@@ -35,6 +35,8 @@ log "Deployed commit: ${COMMIT}"
 
 # Step 2: Build and restart Docker container
 log "Building and restarting RRKM container..."
-docker compose -f "$PROJECT_DIR/compose.yaml" up -d --build 2>&1 || { log "ERROR: docker compose build failed"; exit 1; }
+# Cap build memory to 1.5g so a heavy build can't OOM the 3.8GB VPS
+docker compose -f "$PROJECT_DIR/compose.yaml" build --memory 1.5g 2>&1 || { log "ERROR: docker compose build failed"; exit 1; }
+docker compose -f "$PROJECT_DIR/compose.yaml" up -d 2>&1 || { log "ERROR: docker compose up failed"; exit 1; }
 
 log "=== RRKM Deploy complete (${COMMIT}) ==="
